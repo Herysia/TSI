@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(executable)
 
-FIND_PACKAGE(GLEW HINTS "${CMAKE_SOURCE_DIR}/../../libs/glew-2.1.0/lib\Release\x64" REQUIRED)
+FIND_PACKAGE(GLEW REQUIRED)
 FIND_PACKAGE(GLUT REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 
@@ -37,5 +37,3 @@ add_executable(
 LINK_DIRECTORIES("/usr/lib/nvidia-384")
 
 target_link_libraries(executable ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
-
-
