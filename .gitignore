@@ -1,5 +1,2 @@
 .vscode/tasks.json
-CMakeFiles/*
-CMakeCache.txt
-executable
-cmake_install.cmake
+bin/*

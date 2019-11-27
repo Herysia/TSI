@@ -43,7 +43,7 @@ static void init()
 {
 
     // Chargement du shader
-    shader_program_id = read_shader("shader.vert", "shader.frag");
+    shader_program_id = read_shader("data/shader.vert", "data/shader.frag");
 
 
     //activation de la gestion de la profondeur
