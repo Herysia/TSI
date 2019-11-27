@@ -53,12 +53,12 @@ float vec3::norm() const
     return std::sqrt(x*x+y*y+z*z);
 }
 
-float vec3::dot(const vec3& v1)
+float vec3::dot(const vec3& v1) const
 {
     return x*v1.x+y*v1.y+z*v1.z;
 }
 
-vec3 vec3::cross(const vec3& v1)
+vec3 vec3::cross(const vec3& v1) const
 {
     return vec3(y*v1.z-z*v1.y,
                 z*v1.x-x*v1.z,

@@ -63,6 +63,6 @@ class mat4
 
 };
 /** Applique mat4 sur un vec3 */
-vec3 operator*(const mat4& m);
+vec3 operator*(const mat4& m, const vec3& p);
 
 #endif

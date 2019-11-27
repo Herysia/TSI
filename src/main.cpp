@@ -6,18 +6,6 @@
 \*****************************************************************************/
 
 
-
-#include <iostream>
-#include <cstdlib>
-#include <cstdio>
-#include <cmath>
-
-#define GLEW_STATIC 1
-#include <GL/glew.h>
-#include <GL/glut.h>
-
-#include "glutils.hpp"
-
 #include "MainWindow.hpp"
 
 int main(int argc, char** argv)

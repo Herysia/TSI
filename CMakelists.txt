@@ -20,6 +20,7 @@ file(
 GLOB
 source_files
 src/*.[ch]pp src/shader*
+src/format/*.[ch]pp
 )
 
 SET(CMAKE_BUILD_TYPE Debug)

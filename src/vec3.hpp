@@ -37,9 +37,9 @@ class vec3
     /** Norme d'un vecteur */
     float norm() const;
     /** Produit scalaire */
-    float dot(const vec3& v1);
+    float dot(const vec3& v1) const;
     /** Produit vectoriel */
-    vec3 cross(const vec3& v1);
+    vec3 cross(const vec3& v1) const;
 
     /** Renvoie un vecteur de meme direction de norme 1 */
     vec3 normalize() const;

@@ -1,6 +1,11 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
+
 #define GLEW_STATIC 1
 #include <GL/glew.h>
 #include <GL/glut.h>
