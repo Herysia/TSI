@@ -79,7 +79,23 @@ vec3 vec3::normalize() const
     }
     return temp;
 }
+vec3 vec3::clamp() const
+{
+	vec3 temp = *this;
+	while (temp.y > M_PI)
+		temp.y -= 2*M_PI;
+	while (temp.y < -M_PI)
+		temp.y += 2*M_PI;
+	float xmax = 89.0f * M_PI / 180.0f;
+	if (temp.x > xmax)
+		temp.x = xmax;
+	if (temp.x < -xmax)
+		temp.x = -xmax;
 
+	std::cout << xmax << std::endl;
+	temp.z = 0.0f;
+	return temp;
+}
 vec3 operator+(const vec3& v0,const vec3& v1)
 {
     vec3 temp=v0;

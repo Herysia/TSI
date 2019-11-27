@@ -73,10 +73,10 @@ mat4 mat4::operator*(const mat4& m2)
 }
 
 
-/*const float *mat4::pointeur(const mat4& m)
+const float *mat4::pointeur()
 {
-    return m.M;
-}*/
+    return this->M;
+}
 
 
 mat4 mat4::transpose()

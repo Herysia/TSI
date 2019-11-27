@@ -7,11 +7,15 @@
 
 
 #include "MainWindow.hpp"
+#include "glutils.hpp"
+#include "global.hpp"
 
+GLuint shaderProgramId;
 int main(int argc, char** argv)
 {
-    MainWindow main = MainWindow(argc, argv);
-    main.run();
+    MainWindow main = MainWindow();
+    main.Init(argc, argv);
+    main.Run();
     //Plus rien n'est execute apres cela
     return 0;
 }

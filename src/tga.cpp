@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <iostream>
 
 #include "image.hpp"
-
+#include "glutils.hpp"
 /* Round up a division to the nearest integer. */
 #define ROUNDUP_DIVIDE(n,d) (((n) + (d - 1)) / (d))
 

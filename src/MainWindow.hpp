@@ -5,32 +5,43 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
+#include <list>
 
 #define GLEW_STATIC 1
 #include <GL/glew.h>
 #include <GL/glut.h>
+
 #include "glutils.hpp"
+#include "mat4.hpp"
+#include "Entity.hpp"
+#include "Table.hpp"
 
 class MainWindow
 {    
-    public:
+public:
     
-    MainWindow(int argc, char** argv);
+    MainWindow();
+    void Run();
+    void Init(int argc, char** argv);
+private:
 
-    void run();
-
-    private:
-
-    GLuint shaderProgramId;
+    static MainWindow* currentWindow;
     GLuint vbo;
 
+    mat4 projection;
+    Entity localPlayer;
+    std::list<Entity> props;
+
     static void displayCallback();
-    static void keyboardCallback(unsigned char key, int, int);
     static void timerCallback(int);
     void loadData();
 
+    //Inputs
+    static void keyboardCallback(unsigned char key, int, int);
+    static void mouseCallback(int x, int y);
+    static void specialCallback(int key, int,int);
 
-    protected:
+protected:
 };
 
 #endif //MAIN_WINDOW_H

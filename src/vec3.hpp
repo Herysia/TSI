@@ -44,6 +44,8 @@ class vec3
     /** Renvoie un vecteur de meme direction de norme 1 */
     vec3 normalize() const;
 
+    vec3 clamp() const;
+
     /** Affichage d'un vecteur sur la ligne de commande */
     std::ostream& operator<<(std::ostream& sout);
 

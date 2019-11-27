@@ -1,8 +1,12 @@
 #include "MainWindow.hpp"
 
-
-MainWindow::MainWindow(int argc, char **argv)
+MainWindow::MainWindow()
 {
+}
+MainWindow* MainWindow::currentWindow = NULL;
+void MainWindow::Init(int argc, char** argv)
+{
+    currentWindow=this;
     //**********************************************//
     //Lancement des fonctions principales de GLUT
     //**********************************************//
@@ -23,40 +27,80 @@ MainWindow::MainWindow(int argc, char **argv)
     glutCreateWindow("OpenGL");
 
     //Fonction de la boucle d'affichage
-    glutDisplayFunc(displayCallback);
+    ::glutDisplayFunc(MainWindow::displayCallback);
 
     //Fonction de gestion du clavier
-    glutKeyboardFunc(keyboardCallback);
+    ::glutKeyboardFunc(MainWindow::keyboardCallback);
 
     //Fonction d'appel d'affichage en chaine
-    glutTimerFunc(25, timerCallback, 0);
-
+    ::glutTimerFunc(25, MainWindow::timerCallback, 0);
+	//Fonction de gestion de souris
+	glutPassiveMotionFunc(mouseCallback);
+    //Fonction des touches speciales du clavier (fleches directionnelles)
+    glutSpecialFunc(specialCallback);
     //Initialisation des fonctions OpenGL
     glewInit();
 
     //Notre fonction d'initialisation des donnees et chargement des shaders
     loadData();
 }
-
 void MainWindow::displayCallback()
 {    
+    
     //effacement des couleurs du fond d'ecran
-    glClearColor(0.f, 0.f, 0.f, 1.0f); PRINT_OPENGL_ERROR();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); PRINT_OPENGL_ERROR();
+    glClearColor(0.5f, 0.6f, 0.9f, 1.0f);                 PRINT_OPENGL_ERROR();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   PRINT_OPENGL_ERROR();
 
-    // Active l’utilisation des données de positions
-    glEnableClientState(GL_VERTEX_ARRAY); PRINT_OPENGL_ERROR();
-    // Indique que le buffer courant (désigné par la variable vbo) est utilisé pour les posit
-    glVertexPointer(3, GL_FLOAT, 0, 0); PRINT_OPENGL_ERROR();
-    glDrawArrays(GL_TRIANGLES, 0, 3); PRINT_OPENGL_ERROR();
-    //glPointSize(10.0);
-    //glDrawArrays(GL_POINTS, 0, 3);
-    //glDrawArrays(GL_LINE_LOOP, 0, 3);
+    // Affecte les parametres uniformes de la vue (identique pour tous les modeles de la scene)
+    {
+        //envoie de la rotation
+        glUniformMatrix4fv(get_uni_loc(shaderProgramId,"rotation_view"),1,false, currentWindow->localPlayer.rotation.pointeur()); PRINT_OPENGL_ERROR();
+
+        //envoie du centre de rotation
+        vec3 cv = currentWindow->localPlayer.rotationCenter;
+        glUniform4f(get_uni_loc(shaderProgramId,"rotation_center_view") , cv.x,cv.y,cv.z , 0.0f); PRINT_OPENGL_ERROR();
+
+        //envoie de la translation
+        vec3 tv = currentWindow->localPlayer.translation;
+        glUniform4f(get_uni_loc(shaderProgramId,"translation_view") , tv.x,tv.y,tv.z , 0.0f); PRINT_OPENGL_ERROR();
+    }
+    std::list<Entity>::iterator it;
+
+    for(it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
+        it->Draw();
+    }
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
 }
 void MainWindow::keyboardCallback(unsigned char key, int, int)
+{    
+    switch (key)
+    {
+    case 27://escape
+        exit(0);
+        break;
+    }
+}
+void MainWindow::mouseCallback(int x, int y)
 {
+    float centerx = glutGet(GLUT_WINDOW_X) + glutGet(GLUT_WINDOW_WIDTH) / 2.f;
+	float centery = glutGet(GLUT_WINDOW_Y) + glutGet(GLUT_WINDOW_HEIGHT) / 2.f;
+	float d_angle = 0.1f;
+	float sensitivity = 0.25f;
+
+	//Confine mouse
+	//glutWarpPointer(centerx, centery);
+
+	currentWindow->localPlayer.viewAngle.y += (x - centerx) * d_angle * sensitivity;
+	currentWindow->localPlayer.viewAngle.x += (y - centery) * d_angle * sensitivity;
+
+	currentWindow->localPlayer.viewAngle = currentWindow->localPlayer.viewAngle.clamp();
+	std::cout << currentWindow->localPlayer.viewAngle.y << " ; " << currentWindow->localPlayer.viewAngle.x << std::endl;
+	currentWindow->localPlayer.rotation = mat4::matrice_rotation(currentWindow->localPlayer.viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer.viewAngle.y, 0.0f, 1.0f, 0.0f);
+}
+void MainWindow::specialCallback(int key, int,int)
+{
+    glutPostRedisplay();
 }
 void MainWindow::timerCallback(int)
 {
@@ -69,27 +113,29 @@ void MainWindow::timerCallback(int)
 
 void MainWindow::loadData()
 {
-        // Chargement du shader
+    // Chargement du shader
     shaderProgramId = read_shader("data/shader.vert", "data/shader.frag");
 
+    //matrice de projection
+    projection = mat4::matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
+    glUniformMatrix4fv(get_uni_loc(shaderProgramId,"projection"),1,false,projection.pointeur()); PRINT_OPENGL_ERROR();
+
+    localPlayer = Entity();
+    //centre de rotation de la 'camera' (les objets sont centres en z=-2)
+    localPlayer.rotationCenter = vec3(0.0f,0.0f,0.0f);
 
     //activation de la gestion de la profondeur
     glEnable(GL_DEPTH_TEST); PRINT_OPENGL_ERROR();
 
-    float sommets[]={0.0f,0.0f,0.0f,
-    0.8f,0.0f,0.0f,
-    0.0f,0.8f,0.0f};
+    props.push_back(Table());
 
-    //attribution d’un buffer de donnees (1 indique la création d’un buffer)
-    glGenBuffers(1,&vbo); PRINT_OPENGL_ERROR();
-    //affectation du buffer courant
-    glBindBuffer(GL_ARRAY_BUFFER,vbo); PRINT_OPENGL_ERROR();
-    //copie des donnees des sommets sur la carte graphique
-    glBufferData(GL_ARRAY_BUFFER,sizeof(sommets),sommets,GL_STATIC_DRAW);
-    PRINT_OPENGL_ERROR();
+
+	//hide cursor
+	//glutSetCursor(GLUT_CURSOR_NONE);
 }
 
-void MainWindow::run()
+void MainWindow::Run()
 {
     glutMainLoop();
 }
+

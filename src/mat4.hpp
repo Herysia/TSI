@@ -34,7 +34,7 @@ class mat4
 
 
     /** Recupere un pointeur sur les donnees de la matrice */
-    //const float *pointeur(const mat4& m);
+    const float *pointeur();
 
     /** Calcule la transposee d'une matrice */
     mat4 transpose();
