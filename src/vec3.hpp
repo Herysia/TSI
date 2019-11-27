@@ -35,36 +35,30 @@ class vec3
     vec3& operator/=(float s);
     
     /** Norme d'un vecteur */
-    float norm() const&;
+    float norm() const;
     /** Produit scalaire */
     float dot(const vec3& v1);
     /** Produit vectoriel */
     vec3 cross(const vec3& v1);
 
     /** Renvoie un vecteur de meme direction de norme 1 */
-    vec3 normalize() const&;
+    vec3 normalize() const;
 
     /** Affichage d'un vecteur sur la ligne de commande */
     std::ostream& operator<<(std::ostream& sout);
 
-    /** Somme vectorielle */
-    vec3 operator+(const vec3& v1) const&;
-    /** Difference vectorielle */
-    vec3 operator-(const vec3& v1) const&;
-    /** Multiplication par un scalaire */
-    vec3 operator*(float s) const&;
-    /** Division par un scalaire */
-    vec3 operator/(float s) const&;
 
-    /** Applique mat4 sur un vec3 */
-    //vec3 operator*(const mat4& m);
+
+    
 };
-
-
-
-
-
-
+/** Somme vectorielle */
+vec3 operator+(const vec3& v0,const vec3& v1);
+/** Difference vectorielle */
+vec3 operator-(const vec3& v0,const vec3& v1);
+/** Multiplication par un scalaire */
+vec3 operator*(const vec3& v0,float s);
+/** Division par un scalaire */
+vec3 operator/(const vec3& v0,float s);
 
 
 #endif

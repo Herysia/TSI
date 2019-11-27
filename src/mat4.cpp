@@ -176,6 +176,14 @@ std::ostream& mat4::operator<<(std::ostream& sout)
     return sout;
 }
 
+vec3 operator*(const mat4& m, const vec3& p)
+{
+    vec3 r(m(0,0)*p.x+m(0,1)*p.y+m(0,2)*p.z+m(0,3),
+           m(1,0)*p.x+m(1,1)*p.y+m(1,2)*p.z+m(1,3),
+           m(2,0)*p.x+m(2,1)*p.y+m(2,2)*p.z+m(2,3));
+    r=r/(m(3,0)*p.x+m(3,1)*p.y+m(3,2)*p.z+m(3,3));
 
+    return r;
+}
 
 

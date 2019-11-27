@@ -48,7 +48,7 @@ std::ostream& vec2::operator<<(std::ostream& sout)
     return sout;
 }
 
-float vec2::norm() const&
+float vec2::norm() const
 {
     return std::sqrt(x*x + y*y);
 }
@@ -58,7 +58,7 @@ float vec2::dot(const vec2& v1)
     return x*v1.x + y*v1.y;
 }
 
-vec2 vec2::normalize() const&
+vec2 vec2::normalize() const
 {
     vec2 temp = *this;
     float len = this->norm();
@@ -72,42 +72,35 @@ vec2 vec2::normalize() const&
     }
     return temp;
 }
-
-vec2 vec2::operator+(const vec2& v1) const&
+vec2 operator+(const vec2& v0,const vec2& v1)
 {
-    vec2 temp=*this;
+    vec2 temp=v0;
     temp+=v1;
     return temp;
 }
 
-vec2 vec2::operator-(const vec2& v1) const&
+vec2 operator-(const vec2& v0,const vec2& v1)
 {
-    vec2 temp=*this;
+    vec2 temp=v0;
     temp-=v1;
     return temp;
 }
 
-vec2 vec2::operator*(float s) const&
+vec2 operator*(const vec2& v0,float s)
 {
-    vec2 temp=*this;
+    vec2 temp=v0;
     temp*=s;
     return temp;
 }
 
-
-vec2 vec2::operator/(float s) const&
+vec2 operator*(float s,const vec2& v0)
 {
-    vec2 temp = *this;
-    if(s != 0)
-    {
-        temp /= s;
-    }
-    else
-    {
-        temp.x = temp.y = 0.0f;
-    }
-    return temp;
-    
+    return v0*s;
+}
+
+vec2 operator/(const vec2& v0,float s)
+{
+    vec2 temp=v0;temp/=s;return temp;
 }
 
 

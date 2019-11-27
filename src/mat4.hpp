@@ -59,7 +59,10 @@ class mat4
 
     /** Affichage d'une matrice sur la ligne de commande */
     std::ostream& operator<<(std::ostream& sout);
-};
+    
 
+};
+/** Applique mat4 sur un vec3 */
+vec3 operator*(const mat4& m);
 
 #endif

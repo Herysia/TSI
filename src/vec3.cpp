@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 
+
 vec3::vec3()
     :x(0.0f),y(0.0f),z(0.0f)
 {}
@@ -47,7 +48,7 @@ std::ostream& vec3::operator<<(std::ostream& sout)
     return sout;
 }
 
-float vec3::norm() const&
+float vec3::norm() const
 {
     return std::sqrt(x*x+y*y+z*z);
 }
@@ -64,7 +65,7 @@ vec3 vec3::cross(const vec3& v1)
                 x*v1.y-y*v1.x);
 }
 
-vec3 vec3::normalize() const&
+vec3 vec3::normalize() const
 {
     vec3 temp = *this;
     float len = this->norm();
@@ -79,48 +80,31 @@ vec3 vec3::normalize() const&
     return temp;
 }
 
-vec3 vec3::operator+(const vec3& v1) const&
+vec3 operator+(const vec3& v0,const vec3& v1)
 {
-    vec3 temp=*this;
+    vec3 temp=v0;
     temp+=v1;
     return temp;
 }
 
-vec3 vec3::operator-(const vec3& v1) const&
+vec3 operator-(const vec3& v0,const vec3& v1)
 {
-    vec3 temp=*this;
+    vec3 temp=v0;
     temp-=v1;
     return temp;
 }
 
-vec3 vec3::operator*(float s) const&
+vec3 operator*(const vec3& v0,float s)
 {
-    vec3 temp=*this;
+    vec3 temp=v0;
     temp*=s;
     return temp;
 }
 
-vec3 vec3::operator/(float s) const&
-{
-    vec3 temp=*this;
-    if(s != 0)
-    {
-        temp /= s;
-    }
-    else
-    {
-        temp.x = temp.y = temp.z = 0.0f;
-    }
-    return temp;
-}
-/*
-vec3 vec3::operator*(const mat4& m)
-{
-    vec3 p = *this;
-    vec3 r(m(0,0)*p.x+m(0,1)*p.y+m(0,2)*p.z+m(0,3),
-           m(1,0)*p.x+m(1,1)*p.y+m(1,2)*p.z+m(1,3),
-           m(2,0)*p.x+m(2,1)*p.y+m(2,2)*p.z+m(2,3));
-    r=r/(m(3,0)*p.x+m(3,1)*p.y+m(3,2)*p.z+m(3,3));
 
-    return r;
-}*/
+vec3 operator/(const vec3& v0,float s)
+{
+    vec3 temp=v0;temp/=s;return temp;
+}
+
+

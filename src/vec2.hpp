@@ -33,32 +33,27 @@ class vec2
     vec2& operator/=(float s);
 
     /** Norme d'un vecteur */
-    float norm() const&;
+    float norm() const;
     /** Produit scalaire */
     float dot(const vec2& v1);
 
     /** Renvoie un vecteur de meme direction de norme 1 */
-    vec2 normalize() const&;
+    vec2 normalize() const;
 
     /** Affichage d'un vecteur sur la ligne de commande */
     std::ostream& operator<<(std::ostream& sout);
 
-    /** Somme vectorielle */
-    vec2 operator+(const vec2& v1) const&;
-    /** Difference vectorielle */
-    vec2 operator-(const vec2& v1) const&;
-    /** Multiplication par un scalaire */
-    vec2 operator*(float s) const&;
-    /** Multiplication par un scalaire */
-    vec2 operator*(float s) const&;
-    /** Division par un scalaire */
-    vec2 operator/(float s) const&;
 };
 
-
-
-
-
-
+/** Somme vectorielle */
+vec2 operator+(const vec2& v0,const vec2& v1);
+/** Difference vectorielle */
+vec2 operator-(const vec2& v0,const vec2& v1);
+/** Multiplication par un scalaire */
+vec2 operator*(const vec2& v0,float s);
+/** Multiplication par un scalaire */
+vec2 operator*(float s,const vec2& v0);
+/** Division par un scalaire */
+vec2 operator/(const vec2& v0,float s);
 
 #endif
