@@ -6,6 +6,21 @@
 
 extern GLuint shaderProgramId;
 
+typedef struct keyboardKeyState
+{
+    bool forward = false;
+    bool backward = false;
+    bool right = false;
+    bool left = false;
+    typedef struct View
+    {
+        bool up = false;
+        bool down = false;
+        bool right = false;
+        bool left = false;
+    };
+    View view;
+};
 inline void loadTexture(const char* filename,GLuint *texture_id)
 {
     // Chargement d'une texture (seul les textures tga sont supportes)

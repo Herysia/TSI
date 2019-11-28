@@ -5,15 +5,14 @@ Entity::Entity()
     
 }
 
-void Entity::Draw()
+void Entity::Draw(const vec3& camPosition)
 {
         //envoie des parametres uniformes
     {
         glUniformMatrix4fv(get_uni_loc(shaderProgramId,"rotation_model"),1,false,rotation.pointeur());    PRINT_OPENGL_ERROR();
 
         glUniform4f(get_uni_loc(shaderProgramId,"rotation_center_model") , rotationCenter.x,rotationCenter.y,rotationCenter.z , 0.0f);                                 PRINT_OPENGL_ERROR();
-
-        glUniform4f(get_uni_loc(shaderProgramId,"translation_model") , translation.x,translation.y,translation.z , 0.0f);                                     PRINT_OPENGL_ERROR();
+        glUniform4f(get_uni_loc(shaderProgramId,"translation_model") , translation.x-camPosition.y,translation.y+camPosition.z, translation.z+camPosition.x , 0.0f);                                     PRINT_OPENGL_ERROR();
     }
 
     //placement des VBO

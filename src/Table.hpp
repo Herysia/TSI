@@ -3,6 +3,7 @@
 #include "vec3.hpp"
 #include "Entity.hpp"
 #include "global.hpp"
+
 class Table: public Entity
 {
 public:

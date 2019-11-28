@@ -13,8 +13,8 @@ public:
     mat4 rotation;
     vec3 rotationCenter;
     vec3 translation;
-    vec3 viewAngle;//player only ?
-    void Draw();
+
+    void Draw(const vec3& camPosition);
     GLuint textureId;
 private:
 protected:

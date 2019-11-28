@@ -2,6 +2,7 @@
 
 MainWindow::MainWindow()
 {
+    camPosition = vec3();
 }
 MainWindow* MainWindow::currentWindow = NULL;
 void MainWindow::Init(int argc, char** argv)
@@ -27,22 +28,31 @@ void MainWindow::Init(int argc, char** argv)
     glutCreateWindow("OpenGL");
 
     //Fonction de la boucle d'affichage
-    ::glutDisplayFunc(MainWindow::displayCallback);
+    glutDisplayFunc(displayCallback);
 
-    //Fonction de gestion du clavier
-    ::glutKeyboardFunc(MainWindow::keyboardCallback);
 
-    //Fonction d'appel d'affichage en chaine
-    ::glutTimerFunc(25, MainWindow::timerCallback, 0);
-	//Fonction de gestion de souris
+    //inputs
+    glutKeyboardFunc(keyboardCallbackDown);
+    glutKeyboardUpFunc(keyboardCallbackUp);
+
+    glutSpecialFunc(specialCallbackDown);
+    glutSpecialUpFunc(specialCallbackUp);
+
 	//glutPassiveMotionFunc(mouseCallback);
-    //Fonction des touches speciales du clavier (fleches directionnelles)
-    glutSpecialFunc(specialCallback);
+    
+
+
+    glutTimerFunc(25, timerCallback, 0);
+
     //Initialisation des fonctions OpenGL
     glewInit();
 
     //Notre fonction d'initialisation des donnees et chargement des shaders
     loadData();
+
+    //Cursor and keyboard setup
+	glutSetCursor(GLUT_CURSOR_NONE);
+    glutIgnoreKeyRepeat(1);
 }
 void MainWindow::displayCallback()
 {    
@@ -68,20 +78,70 @@ void MainWindow::displayCallback()
     std::list<Entity>::iterator it;
 
     for(it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
-        it->Draw();
+        it->Draw(currentWindow->camPosition);
     }
-    std::cout << currentWindow->localPlayer->rotation.pointeur() << std::endl;
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
 }
-void MainWindow::keyboardCallback(unsigned char key, int, int)
+void MainWindow::keyboardCallback(unsigned char key, int, int, bool down)
 {    
     switch (key)
     {
     case 27://escape
         exit(0);
         break;
+    case 'z':
+        currentWindow->keyState.forward = down;
+        break;
+    case 's':
+        currentWindow->keyState.backward = down;
+        break;
+    case 'q':
+        currentWindow->keyState.left = down;
+        break;
+    case 'd':
+        currentWindow->keyState.right = down;
+        break;
     }
+}
+
+void MainWindow::specialCallback(int key, int ,int, bool down)
+{
+    float dL=0.03f;
+    switch (key)
+    {
+    case GLUT_KEY_UP:
+        currentWindow->keyState.view.up = down;
+        break;
+    case GLUT_KEY_DOWN:
+        currentWindow->keyState.view.down = down;
+        break;
+    case GLUT_KEY_LEFT:
+        currentWindow->keyState.view.left = down;
+        break;
+    case GLUT_KEY_RIGHT:
+        currentWindow->keyState.view.right = down;
+        break;
+    }
+
+}
+void MainWindow::handleInput()
+{
+    vec3 dir((currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->viewAngle.y)
+            -(currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->viewAngle.y)
+            , (currentWindow->keyState.forward - currentWindow->keyState.backward) * sin(currentWindow->localPlayer->viewAngle.y)
+            +(currentWindow->keyState.right - currentWindow->keyState.left) * cos(currentWindow->localPlayer->viewAngle.y)
+            , 0.0f);
+    
+    //std::cout << currentWindow->localPlayer->viewAngle.y << ' , ' << cos(currentWindow->localPlayer->viewAngle.y) << ' ,' << sin(currentWindow->localPlayer->viewAngle.y) << std::endl;
+    std::cout << (currentWindow->keyState.right - currentWindow->keyState.left) << std::endl;
+    dir = dir.normalize();
+    currentWindow->camPosition.x += dir.x*0.1f;
+    currentWindow->camPosition.y += dir.y*0.1f;
+    //std::cout << currentWindow->camPosition.x << " , " << currentWindow->camPosition.y << std::endl;
+    
+    currentWindow->localPlayer->viewAngle.y +=  (currentWindow->keyState.view.right - currentWindow->keyState.view.left)*0.1f;
+    currentWindow->localPlayer->viewAngle.x +=  (currentWindow->keyState.view.up - currentWindow->keyState.view.down)*0.1f;
 }
 void MainWindow::mouseCallback(int x, int y)
 {
@@ -97,36 +157,16 @@ void MainWindow::mouseCallback(int x, int y)
 	currentWindow->localPlayer->viewAngle.x += (y - centery) * d_angle * sensitivity;
 
 	currentWindow->localPlayer->viewAngle = currentWindow->localPlayer->viewAngle.clamp();
-	std::cout << currentWindow->localPlayer->viewAngle.y*180.0f/M_PI << " ; " << currentWindow->localPlayer->viewAngle.x*180.0f/M_PI << std::endl;
-	currentWindow->localPlayer->rotation = mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.y, 0.0f, 1.0f, 0.0f);
-}
-void MainWindow::specialCallback(int key, int,int)
-{
-    float dL=0.03f;
-    switch (key)
-    {
-    case GLUT_KEY_UP:
-        currentWindow->localPlayer->viewAngle.x += dL; //rotation avec la touche du haut
-        break;
-    case GLUT_KEY_DOWN:
-        currentWindow->localPlayer->viewAngle.x -= dL; //rotation avec la touche du bas
-        break;
-    case GLUT_KEY_LEFT:
-        currentWindow->localPlayer->viewAngle.y -= dL; //rotation avec la touche de gauche
-        break;
-    case GLUT_KEY_RIGHT:
-        currentWindow->localPlayer->viewAngle.y += dL; //rotation avec la touche de droite
-        break;
-    }
-	currentWindow->localPlayer->viewAngle = currentWindow->localPlayer->viewAngle.clamp();
-	std::cout << currentWindow->localPlayer->viewAngle.y*180.0f/M_PI << " ; " << currentWindow->localPlayer->viewAngle.x*180.0f/M_PI << std::endl;
-	currentWindow->localPlayer->rotation = mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.y, 0.0f, 1.0f, 0.0f);
-    glutPostRedisplay();
+	//currentWindow->localPlayer->rotation = mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.y, 0.0f, 1.0f, 0.0f);
+
 }
 void MainWindow::timerCallback(int)
 {
     //demande de rappel de cette fonction dans 25ms
     glutTimerFunc(25, timerCallback, 0);
+
+    currentWindow->localPlayer->updateView();
+    currentWindow->handleInput();
 
     //reactualisation de l'affichage
     glutPostRedisplay();
@@ -141,9 +181,7 @@ void MainWindow::loadData()
     projection = mat4::matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
     glUniformMatrix4fv(get_uni_loc(shaderProgramId,"projection"),1,false,projection.pointeur()); PRINT_OPENGL_ERROR();
 
-    localPlayer = new Entity();
-    //centre de rotation de la 'camera' (les objets sont centres en z=-2)
-    localPlayer->rotationCenter = vec3(0.0f,0.0f,-2.0f);
+    localPlayer = new Player();
 
     //activation de la gestion de la profondeur
     glEnable(GL_DEPTH_TEST); PRINT_OPENGL_ERROR();
@@ -152,7 +190,6 @@ void MainWindow::loadData()
     props.push_back(Floor());
 
 	//hide cursor
-	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
 void MainWindow::Run()

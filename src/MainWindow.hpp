@@ -16,7 +16,7 @@
 #include "Entity.hpp"
 #include "Table.hpp"
 #include "Floor.hpp"
-#include "Triangle.hpp"
+#include "Player.hpp"
 
 class MainWindow
 {    
@@ -31,20 +31,39 @@ private:
     GLuint vbo;
 
     mat4 projection;
-    Entity* localPlayer;
+    Player* localPlayer;
     std::list<Entity> props;
-    Triangle* tr;
+
+    keyboardKeyState keyState;
 
     static void displayCallback();
     static void timerCallback(int);
     void loadData();
+    void handleInput();
 
     //Inputs
-    static void keyboardCallback(unsigned char key, int, int);
+    inline static void keyboardCallbackUp(unsigned char key, int x, int y)
+    {
+        currentWindow->keyboardCallback(key, x, y, false);
+    }
+    inline static void keyboardCallbackDown(unsigned char key, int x, int y)
+    {
+        currentWindow->keyboardCallback(key, x, y, true);
+    }
+    inline static void specialCallbackUp(int key, int x, int y)
+    {
+        currentWindow->specialCallback(key, x, y, false);
+    }
+    inline static void specialCallbackDown(int key, int x, int y)
+    {
+        currentWindow->specialCallback(key, x, y, true);
+    }
+    void keyboardCallback(unsigned char key, int, int, bool down);//down=1 -> key pressed down   /  down=0 -> key released
+    void specialCallback(int key, int, int, bool down);
     static void mouseCallback(int x, int y);
-    static void specialCallback(int key, int,int);
 
 protected:
+    vec3 camPosition;
 };
 
 #endif //MAIN_WINDOW_H
