@@ -38,7 +38,7 @@ void Entity::Draw()
 
     //affichage
     {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,vbo);                           PRINT_OPENGL_ERROR();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,vboi);                           PRINT_OPENGL_ERROR();
         glBindTexture(GL_TEXTURE_2D, textureId);                             PRINT_OPENGL_ERROR();
         glDrawElements(GL_TRIANGLES, 3*nbTriangles, GL_UNSIGNED_INT, 0);     PRINT_OPENGL_ERROR();
     }

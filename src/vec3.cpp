@@ -91,8 +91,6 @@ vec3 vec3::clamp() const
 		temp.x = xmax;
 	if (temp.x < -xmax)
 		temp.x = -xmax;
-
-	std::cout << xmax << std::endl;
 	temp.z = 0.0f;
 	return temp;
 }

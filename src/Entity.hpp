@@ -15,13 +15,13 @@ public:
     vec3 translation;
     vec3 viewAngle;//player only ?
     void Draw();
+    GLuint textureId;
 private:
 protected:
     mesh m;
     int nbTriangles;
     GLuint vbo;
     GLuint vboi;
-    GLuint textureId;
 };
 
 #endif //ENTITY_H

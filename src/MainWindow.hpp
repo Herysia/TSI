@@ -15,6 +15,8 @@
 #include "mat4.hpp"
 #include "Entity.hpp"
 #include "Table.hpp"
+#include "Floor.hpp"
+#include "Triangle.hpp"
 
 class MainWindow
 {    
@@ -29,8 +31,9 @@ private:
     GLuint vbo;
 
     mat4 projection;
-    Entity localPlayer;
+    Entity* localPlayer;
     std::list<Entity> props;
+    Triangle* tr;
 
     static void displayCallback();
     static void timerCallback(int);

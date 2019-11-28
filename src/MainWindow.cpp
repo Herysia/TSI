@@ -35,7 +35,7 @@ void MainWindow::Init(int argc, char** argv)
     //Fonction d'appel d'affichage en chaine
     ::glutTimerFunc(25, MainWindow::timerCallback, 0);
 	//Fonction de gestion de souris
-	glutPassiveMotionFunc(mouseCallback);
+	//glutPassiveMotionFunc(mouseCallback);
     //Fonction des touches speciales du clavier (fleches directionnelles)
     glutSpecialFunc(specialCallback);
     //Initialisation des fonctions OpenGL
@@ -54,21 +54,23 @@ void MainWindow::displayCallback()
     // Affecte les parametres uniformes de la vue (identique pour tous les modeles de la scene)
     {
         //envoie de la rotation
-        glUniformMatrix4fv(get_uni_loc(shaderProgramId,"rotation_view"),1,false, currentWindow->localPlayer.rotation.pointeur()); PRINT_OPENGL_ERROR();
+        glUniformMatrix4fv(get_uni_loc(shaderProgramId,"rotation_view"),1,false, currentWindow->localPlayer->rotation.pointeur()); PRINT_OPENGL_ERROR();
 
         //envoie du centre de rotation
-        vec3 cv = currentWindow->localPlayer.rotationCenter;
+        vec3 cv = currentWindow->localPlayer->rotationCenter;
         glUniform4f(get_uni_loc(shaderProgramId,"rotation_center_view") , cv.x,cv.y,cv.z , 0.0f); PRINT_OPENGL_ERROR();
 
         //envoie de la translation
-        vec3 tv = currentWindow->localPlayer.translation;
+        vec3 tv = currentWindow->localPlayer->translation;
         glUniform4f(get_uni_loc(shaderProgramId,"translation_view") , tv.x,tv.y,tv.z , 0.0f); PRINT_OPENGL_ERROR();
     }
+    
     std::list<Entity>::iterator it;
 
     for(it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
         it->Draw();
     }
+    std::cout << currentWindow->localPlayer->rotation.pointeur() << std::endl;
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
 }
@@ -89,17 +91,36 @@ void MainWindow::mouseCallback(int x, int y)
 	float sensitivity = 0.25f;
 
 	//Confine mouse
-	//glutWarpPointer(centerx, centery);
+	glutWarpPointer(centerx, centery);
 
-	currentWindow->localPlayer.viewAngle.y += (x - centerx) * d_angle * sensitivity;
-	currentWindow->localPlayer.viewAngle.x += (y - centery) * d_angle * sensitivity;
+	currentWindow->localPlayer->viewAngle.y += (x - centerx) * d_angle * sensitivity;
+	currentWindow->localPlayer->viewAngle.x += (y - centery) * d_angle * sensitivity;
 
-	currentWindow->localPlayer.viewAngle = currentWindow->localPlayer.viewAngle.clamp();
-	std::cout << currentWindow->localPlayer.viewAngle.y << " ; " << currentWindow->localPlayer.viewAngle.x << std::endl;
-	currentWindow->localPlayer.rotation = mat4::matrice_rotation(currentWindow->localPlayer.viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer.viewAngle.y, 0.0f, 1.0f, 0.0f);
+	currentWindow->localPlayer->viewAngle = currentWindow->localPlayer->viewAngle.clamp();
+	std::cout << currentWindow->localPlayer->viewAngle.y*180.0f/M_PI << " ; " << currentWindow->localPlayer->viewAngle.x*180.0f/M_PI << std::endl;
+	currentWindow->localPlayer->rotation = mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.y, 0.0f, 1.0f, 0.0f);
 }
 void MainWindow::specialCallback(int key, int,int)
 {
+    float dL=0.03f;
+    switch (key)
+    {
+    case GLUT_KEY_UP:
+        currentWindow->localPlayer->viewAngle.x += dL; //rotation avec la touche du haut
+        break;
+    case GLUT_KEY_DOWN:
+        currentWindow->localPlayer->viewAngle.x -= dL; //rotation avec la touche du bas
+        break;
+    case GLUT_KEY_LEFT:
+        currentWindow->localPlayer->viewAngle.y -= dL; //rotation avec la touche de gauche
+        break;
+    case GLUT_KEY_RIGHT:
+        currentWindow->localPlayer->viewAngle.y += dL; //rotation avec la touche de droite
+        break;
+    }
+	currentWindow->localPlayer->viewAngle = currentWindow->localPlayer->viewAngle.clamp();
+	std::cout << currentWindow->localPlayer->viewAngle.y*180.0f/M_PI << " ; " << currentWindow->localPlayer->viewAngle.x*180.0f/M_PI << std::endl;
+	currentWindow->localPlayer->rotation = mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.y, 0.0f, 1.0f, 0.0f);
     glutPostRedisplay();
 }
 void MainWindow::timerCallback(int)
@@ -120,18 +141,18 @@ void MainWindow::loadData()
     projection = mat4::matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
     glUniformMatrix4fv(get_uni_loc(shaderProgramId,"projection"),1,false,projection.pointeur()); PRINT_OPENGL_ERROR();
 
-    localPlayer = Entity();
+    localPlayer = new Entity();
     //centre de rotation de la 'camera' (les objets sont centres en z=-2)
-    localPlayer.rotationCenter = vec3(0.0f,0.0f,0.0f);
+    localPlayer->rotationCenter = vec3(0.0f,0.0f,-2.0f);
 
     //activation de la gestion de la profondeur
     glEnable(GL_DEPTH_TEST); PRINT_OPENGL_ERROR();
 
     props.push_back(Table());
-
+    props.push_back(Floor());
 
 	//hide cursor
-	//glutSetCursor(GLUT_CURSOR_NONE);
+	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
 void MainWindow::Run()
