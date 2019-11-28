@@ -22,7 +22,7 @@ void MainWindow::Init(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
     //Taille de la fenetre a l'ouverture
-    glutInitWindowSize(600, 600);
+    glutInitWindowSize(1366, 768);
 
     //Titre de la fenetre
     glutCreateWindow("OpenGL");
@@ -178,7 +178,7 @@ void MainWindow::loadData()
     shaderProgramId = read_shader("data/shader.vert", "data/shader.frag");
 
     //matrice de projection
-    projection = mat4::matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
+    projection = mat4::matrice_projection(80.0f*M_PI/180.0f,16.0f/9.0f,0.01f,100.0f);
     glUniformMatrix4fv(get_uni_loc(shaderProgramId,"projection"),1,false,projection.pointeur()); PRINT_OPENGL_ERROR();
 
     localPlayer = new Player();

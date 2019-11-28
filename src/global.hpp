@@ -34,7 +34,7 @@ inline void loadTexture(const char* filename,GLuint *texture_id)
 
         //Selection de la texture courante a partir de son identifiant
         glBindTexture(GL_TEXTURE_2D, *texture_id); PRINT_OPENGL_ERROR();
-
+        
         //Parametres de la texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); PRINT_OPENGL_ERROR();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); PRINT_OPENGL_ERROR();
