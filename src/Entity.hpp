@@ -5,7 +5,15 @@
 #include "mat4.hpp"
 #include "glutils.hpp"
 #include "global.hpp"
+#include <vector>
+#include "Plane.hpp"
+#include "AABB.hpp"
 
+enum CollisionMode
+{
+    MODE_PLANE,
+    MODE_AABB
+};
 class Entity
 {
 public:
@@ -16,12 +24,32 @@ public:
 
     void Draw(const vec3& camPosition);
     GLuint textureId;
+    bool checkCollision(Entity other);
+
+    inline CollisionMode getMode()
+    {
+        return mode;
+    }
+    inline Plane getPlane()
+    {
+        return plane;
+    }
+    inline AABB getAABB()
+    {
+        return aabb;
+    }
+
 private:
 protected:
     mesh m;
     int nbTriangles;
     GLuint vbo;
     GLuint vboi;
+    bool hasGravity = false;
+    bool hasCollisions = false;
+    Plane plane;
+    AABB aabb;
+    CollisionMode mode;
 };
 
 #endif //ENTITY_H

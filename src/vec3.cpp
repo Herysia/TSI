@@ -48,9 +48,9 @@ vec3& vec3::operator/=(float s)
     return *this;
 }
 
-std::ostream& vec3::operator<<(std::ostream& sout)
+std::ostream& operator<<(std::ostream& sout, const vec3& vec)
 {
-    sout<< x <<","<< y <<","<< z;
+    sout<< vec.x <<","<< vec.y <<","<< vec.z;
     return sout;
 }
 

@@ -4,12 +4,12 @@
 Floor::Floor()
 {
         //Creation manuelle du model 2
-
+    mode = MODE_PLANE;
     //coordonnees geometriques des sommets
     vec3 p0=vec3(-25.0f,-0.9f,-25.0f);
     vec3 p1=vec3( 25.0f,-0.9f,-25.0f);
-    vec3 p2=vec3( 25.0f,-0.9f, 25.0f);
-    vec3 p3=vec3(-25.0f,-0.9f, 25.0f);
+    vec3 p2=vec3( 25.0f,-10.9f, 25.0f);
+    vec3 p3=vec3(-25.0f,-10.9f, 25.0f);
 
     //normales pour chaque sommet
     vec3 n0=vec3(0.0f,1.0f,0.0f);
@@ -17,6 +17,7 @@ Floor::Floor()
     vec3 n2=n0;
     vec3 n3=n0;
 
+    plane = Plane(p0,p1,p2);
     //couleur pour chaque sommet
     vec3 c0=vec3(1.0f,1.0f,1.0f);
     vec3 c1=c0;

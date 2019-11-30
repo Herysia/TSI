@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
-#include <list>
+#include <vector>
 
 #define GLEW_STATIC 1
 #include <GL/glew.h>
@@ -32,7 +32,7 @@ private:
 
     mat4 projection;
     Player* localPlayer;
-    std::list<Entity> props;
+    std::vector<Entity> props;
 
     keyboardKeyState keyState;
 
@@ -63,7 +63,6 @@ private:
     static void mouseCallback(int x, int y);
 
 protected:
-    vec3 camPosition;
 };
 
 #endif //MAIN_WINDOW_H

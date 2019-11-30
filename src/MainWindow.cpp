@@ -2,7 +2,7 @@
 
 MainWindow::MainWindow()
 {
-    camPosition = vec3();
+    
 }
 MainWindow* MainWindow::currentWindow = NULL;
 void MainWindow::Init(int argc, char** argv)
@@ -75,10 +75,8 @@ void MainWindow::displayCallback()
         glUniform4f(get_uni_loc(shaderProgramId,"translation_view") , tv.x,tv.y,tv.z , 0.0f); PRINT_OPENGL_ERROR();
     }
     
-    std::list<Entity>::iterator it;
-
-    for(it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
-        it->Draw(currentWindow->camPosition);
+    for(std::vector<Entity>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
+        it->Draw(currentWindow->localPlayer->getCamPosition());
     }
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
@@ -127,21 +125,17 @@ void MainWindow::specialCallback(int key, int ,int, bool down)
 }
 void MainWindow::handleInput()
 {
-    vec3 dir((currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->viewAngle.y)
-            -(currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->viewAngle.y)
-            , (currentWindow->keyState.forward - currentWindow->keyState.backward) * sin(currentWindow->localPlayer->viewAngle.y)
-            +(currentWindow->keyState.right - currentWindow->keyState.left) * cos(currentWindow->localPlayer->viewAngle.y)
-            , 0.0f);
+    vec3 dir((currentWindow->keyState.forward - currentWindow->keyState.backward) * sin(currentWindow->localPlayer->getViewAngle().y)
+            +(currentWindow->keyState.right - currentWindow->keyState.left) * cos(currentWindow->localPlayer->getViewAngle().y)
+            ,0.0f 
+            , (currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->getViewAngle().y)
+            -(currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->getViewAngle().y));
     
-    //std::cout << currentWindow->localPlayer->viewAngle.y << ' , ' << cos(currentWindow->localPlayer->viewAngle.y) << ' ,' << sin(currentWindow->localPlayer->viewAngle.y) << std::endl;
-    std::cout << (currentWindow->keyState.right - currentWindow->keyState.left) << std::endl;
-    dir = dir.normalize();
-    currentWindow->camPosition.x += dir.x*0.1f;
-    currentWindow->camPosition.y += dir.y*0.1f;
-    //std::cout << currentWindow->camPosition.x << " , " << currentWindow->camPosition.y << std::endl;
+    currentWindow->localPlayer->move(dir.normalize()*0.1f);
     
-    currentWindow->localPlayer->viewAngle.y +=  (currentWindow->keyState.view.right - currentWindow->keyState.view.left)*0.1f;
-    currentWindow->localPlayer->viewAngle.x +=  (currentWindow->keyState.view.up - currentWindow->keyState.view.down)*0.1f;
+    currentWindow->localPlayer->rotateAngle((currentWindow->keyState.view.up - currentWindow->keyState.view.down)*0.1f,
+                                            (currentWindow->keyState.view.right - currentWindow->keyState.view.left)*0.1f,
+                                            0.0f);
 }
 void MainWindow::mouseCallback(int x, int y)
 {
@@ -152,11 +146,12 @@ void MainWindow::mouseCallback(int x, int y)
 
 	//Confine mouse
 	glutWarpPointer(centerx, centery);
+    
+    currentWindow->localPlayer->rotateAngle((y - centery) * d_angle * sensitivity,
+                                            (x - centerx) * d_angle * sensitivity,
+                                            0.0f);
 
-	currentWindow->localPlayer->viewAngle.y += (x - centerx) * d_angle * sensitivity;
-	currentWindow->localPlayer->viewAngle.x += (y - centery) * d_angle * sensitivity;
-
-	currentWindow->localPlayer->viewAngle = currentWindow->localPlayer->viewAngle.clamp();
+	currentWindow->localPlayer->clampViewAngle();
 	//currentWindow->localPlayer->rotation = mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(currentWindow->localPlayer->viewAngle.y, 0.0f, 1.0f, 0.0f);
 
 }
@@ -167,6 +162,21 @@ void MainWindow::timerCallback(int)
 
     currentWindow->localPlayer->updateView();
     currentWindow->handleInput();
+    currentWindow->localPlayer->applyGravity();
+    for(std::vector<Entity>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
+    {
+        
+        float dist = (*it.base()).getPlane().normal.dot(currentWindow->localPlayer->getCamPosition())-(*it.base()).getPlane().dist;
+        std::cout << dist << std::endl;
+        currentWindow->localPlayer->correctPosition(*it.base());
+        /*
+        if(currentWindow->localPlayer->checkCollision(*it.base()))
+        {
+            currentWindow->localPlayer->correctPosition(*it.base());
+            std::cout << "1" << std::endl;
+        }*/
+    }
+
 
     //reactualisation de l'affichage
     glutPostRedisplay();
@@ -186,10 +196,9 @@ void MainWindow::loadData()
     //activation de la gestion de la profondeur
     glEnable(GL_DEPTH_TEST); PRINT_OPENGL_ERROR();
 
-    props.push_back(Table());
+    //props.push_back(Table());
     props.push_back(Floor());
 
-	//hide cursor
 }
 
 void MainWindow::Run()

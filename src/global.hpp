@@ -5,7 +5,7 @@
 #include "image.hpp"
 
 extern GLuint shaderProgramId;
-
+#define Abs(x) (x>=0 ? x : -x)
 typedef struct keyboardKeyState
 {
     bool forward = false;

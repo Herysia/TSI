@@ -47,7 +47,7 @@ class vec3
     vec3 clamp() const;
 
     /** Affichage d'un vecteur sur la ligne de commande */
-    std::ostream& operator<<(std::ostream& sout);
+    friend std::ostream& operator<<(std::ostream& sout, const vec3& vec);
 
 
 

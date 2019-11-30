@@ -3,6 +3,11 @@
 Player::Player()
 {
     rotationCenter = vec3();
+    camPosition = vec3();
+    size = vec3(0.3f, 1.0f, 0.3f);
+    mode = MODE_AABB;
+    //Les yeux sont à 90% de la taille du joueur
+    aabb = AABB(vec3(-size.x/2, -0.9f*size.y,-size.z/2), vec3(size.x/2, 0.1f*size.y,size.z/2));
 }
 void Player::updateView()
 {
@@ -12,4 +17,63 @@ void Player::updateView()
 void Player::Draw()
 {
     return;
+}
+
+void Player::applyGravity()
+{
+    move(0.0f,-0.1f,0.0f);
+}
+void Player::move(float x, float y, float z)
+{
+    move(vec3(x, y, z));
+}
+
+void Player::move(vec3 dist)
+{
+    camPosition+=dist;
+    aabb.max+=dist;
+    aabb.min+=dist;
+}
+
+vec3 Player::getCamPosition()
+{
+    return camPosition;
+}
+vec3 Player::getViewAngle()
+{
+    return viewAngle;
+}
+void Player::rotateAngle(float x, float y, float z)
+{
+    rotateAngle(vec3(x, y, z));
+}
+void Player::rotateAngle(vec3 angle)
+{
+    viewAngle+=angle;
+}
+
+void Player::clampViewAngle()
+{
+    viewAngle = viewAngle.clamp();
+}
+
+void Player::correctPosition(Entity other)
+{
+    if(other.getMode() == MODE_PLANE)
+    {
+        float verticalProj = (other.getPlane().normal.y == 0.0f ? 0.0f : other.getPlane().normal.dot(vec3((aabb.max.x+aabb.min.x)*0.5f, 0.0f, (aabb.max.z+aabb.min.z)*0.5f))+other.getPlane().dist) / other.getPlane().normal.y;
+        std::cout << aabb.min.y << ", " << verticalProj << ", " << aabb.max.y << std::endl;
+        if(verticalProj<=aabb.min.y || verticalProj>=aabb.max.y)//not vertially colliding (centered)
+            return;
+        if(verticalProj-aabb.min.y < aabb.max.y - verticalProj)
+            move(0.0f, verticalProj-aabb.min.y, 0.0f);
+        else
+            move(0.0f, aabb.max.y - verticalProj, 0.0f);
+        std::cout << "1" << std::endl;
+    }
+    else
+    {
+        
+    }
+    
 }
