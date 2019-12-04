@@ -10,6 +10,7 @@ public:
     AABB() : AABB(vec3(), vec3()){};
     AABB(vec3 min, vec3 max);
     bool isColliding(AABB other);
+    vec2 getCenter2D();
 };
 
 #endif //AABB_H

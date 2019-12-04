@@ -17,7 +17,7 @@ Plane::Plane(vec3 p1, vec3 p2, vec3 p3)
 Plane::Plane(vec3 p1, vec3 p2, vec3 p3, vec3 p4)
 {
     isInfinite = false;
-    //todo : 2D min/max
+    p1=p1;p2=p2;p3=p3;p4=p4;
     vec3 u = p2 - p1;
     vec3 v = p3 - p1;
     normal = u.cross(v).normalize();
@@ -75,4 +75,22 @@ bool Plane::isColliding(AABB other)
 bool Plane::isColliding(Plane other)
 {
     
+}
+
+bool Plane::check2Dcoord(AABB other)
+{
+    vec2 center2D = other.getCenter2D();
+    //outside axis1
+    //TODO tjrs 0 ?
+    std::cout << "------------------" << std::endl;
+    std::cout << center2D.dot((p2-p1).get2D()) << std::endl;
+    std::cout << center2D.dot((p2-p1).get2D()) << std::endl;
+    std::cout << center2D.dot((p2-p1).get2D()) << std::endl;
+    std::cout << center2D.dot((p2-p1).get2D()) << std::endl;
+    if((center2D.dot((p2-p1).get2D()) > 0.0f ^ center2D.dot((p3-p4).get2D()) > 0.0f))
+        return true;
+    //outside axis2
+    if((center2D.dot((p4-p1).get2D()) > 0.0f ^ center2D.dot((p3-p2).get2D()) > 0.0f))
+        return true;
+    return false;
 }

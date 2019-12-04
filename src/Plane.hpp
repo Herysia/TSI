@@ -19,6 +19,9 @@ public:
     bool isInfinite;
     bool isColliding(AABB other);
     bool isColliding(Plane other);
+    bool check2Dcoord(AABB other);
+private:
+    vec3 p1, p2, p3, p4;
 };
 
 #endif //PLANE_H

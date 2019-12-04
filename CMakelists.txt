@@ -14,7 +14,6 @@ INCLUDE_DIRECTORIES(${GLUT_INCLUDE_DIR})
 LINK_DIRECTORIES(${GLUT_LIBRARY_DIRS})
 
 INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIR})
-LINK_DIRECTORIES("/usr/lib/nvidia-384")
 
 
 file(
@@ -35,5 +34,6 @@ add_executable(
    )	
 
 ## Nvidia setting for CPE installs
+LINK_DIRECTORIES("/usr/lib/nvidia-384")
 
 target_link_libraries(executable ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

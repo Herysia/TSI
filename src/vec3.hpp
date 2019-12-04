@@ -5,6 +5,7 @@
 #define VEC3_HPP
 
 #include <iostream>
+#include "vec2.hpp"
 //#include "mat4.hpp"
 //class mat4;
 /** Une structure de vecteur 3D */
@@ -40,6 +41,12 @@ class vec3
     float dot(const vec3& v1) const;
     /** Produit vectoriel */
     vec3 cross(const vec3& v1) const;
+
+    /** Projection sur le plan horizontal*/
+    inline vec2 get2D() const
+    {
+        return vec2(x, z);
+    }
 
     /** Renvoie un vecteur de meme direction de norme 1 */
     vec3 normalize() const;
