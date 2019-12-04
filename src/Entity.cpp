@@ -3,7 +3,7 @@
 Entity::Entity()
 {
     mode = MODE_AABB;
-    shaderProgramId = shaderProgramIdColored;
+    shaderProgramId = shaderProgramIdTextured;
 }
 
 void Entity::Draw(const vec3& camPosition)

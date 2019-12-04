@@ -116,6 +116,8 @@ void MainWindow::keyboardCallback(unsigned char key, int, int, bool down)
     case 'd':
         currentWindow->keyState.right = down;
         break;
+    case ' ':
+        currentWindow->keyState.jump = down;
     }
 }
 
@@ -147,8 +149,8 @@ void MainWindow::handleInput()
             , (currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->getViewAngle().y)
             -(currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->getViewAngle().y));
     
-    currentWindow->localPlayer->move(dir.normalize()*0.1f);
-    
+    currentWindow->localPlayer->setHorizontalSpeed(dir.normalize()*0.1f);
+    currentWindow->localPlayer->handleJump(currentWindow->keyState.jump);
     currentWindow->localPlayer->rotateAngle((currentWindow->keyState.view.up - currentWindow->keyState.view.down)*0.1f,
                                             (currentWindow->keyState.view.right - currentWindow->keyState.view.left)*0.1f,
                                             0.0f);
@@ -178,7 +180,7 @@ void MainWindow::timerCallback(int)
 
     currentWindow->localPlayer->updateView();
     currentWindow->handleInput();
-    currentWindow->localPlayer->applyGravity();
+    currentWindow->localPlayer->applyPhysics();
     for(std::vector<Entity>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
     {
         

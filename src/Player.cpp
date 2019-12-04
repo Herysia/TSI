@@ -4,10 +4,12 @@ Player::Player()
 {
     rotationCenter = vec3();
     camPosition = vec3();
+    speed = vec3();
     size = vec3(0.3f, 1.0f, 0.3f);
     mode = MODE_AABB;
     //Les yeux sont à 90% de la taille du joueur
     aabb = AABB(vec3(-size.x/2, -0.9f*size.y,-size.z/2), vec3(size.x/2, 0.1f*size.y,size.z/2));
+
 }
 void Player::updateView()
 {
@@ -19,9 +21,18 @@ void Player::Draw()
     return;
 }
 
-void Player::applyGravity()
+void Player::applyPhysics()
 {
-    move(0.0f,-0.1f,0.0f);
+    //apply gravity
+    speed.y-=0.01;
+    //apply speed
+
+    move(speed);
+}
+void Player::setHorizontalSpeed(vec3 horizontalSpeed)
+{
+    speed.x = horizontalSpeed.x;
+    speed.z = horizontalSpeed.z;
 }
 void Player::move(float x, float y, float z)
 {
@@ -51,7 +62,14 @@ void Player::rotateAngle(vec3 angle)
 {
     viewAngle+=angle;
 }
-
+void Player::handleJump(bool jumpKey)
+{
+    if(jumpKey && isOnGround)
+    {
+        speed.y += 0.2f;
+        isOnGround=false;
+    }
+}
 void Player::clampViewAngle()
 {
     viewAngle = viewAngle.clamp();
@@ -68,6 +86,8 @@ void Player::correctPosition(Entity other)
             move(0.0f, verticalProj-aabb.min.y, 0.0f);
         else
             move(0.0f, aabb.max.y - verticalProj, 0.0f);
+        speed.y = 0.0f;
+        isOnGround = true;
     }
     else
     {

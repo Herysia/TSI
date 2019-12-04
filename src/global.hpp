@@ -14,6 +14,7 @@ typedef struct keyboardKeyState
     bool backward = false;
     bool right = false;
     bool left = false;
+    bool jump = false;
     typedef struct View
     {
         bool up = false;
