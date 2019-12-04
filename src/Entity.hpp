@@ -24,6 +24,7 @@ public:
 
     void Draw(const vec3& camPosition);
     GLuint textureId;
+    vec3 color;
     bool checkCollision(Entity other);
 
     inline CollisionMode getMode()
@@ -40,6 +41,15 @@ public:
     }
 
 private:
+    GLuint shaderProgramId;
+    inline bool isColored()
+    {
+        return shaderProgramId == shaderProgramIdColored;
+    }
+    inline bool isTextured()
+    {
+        return shaderProgramId == shaderProgramIdTextured;
+    }
 protected:
     mesh m;
     int nbTriangles;
@@ -50,6 +60,7 @@ protected:
     Plane plane;
     AABB aabb;
     CollisionMode mode;
+    
 };
 
 #endif //ENTITY_H

@@ -62,21 +62,37 @@ void MainWindow::displayCallback()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   PRINT_OPENGL_ERROR();
 
     // Affecte les parametres uniformes de la vue (identique pour tous les modeles de la scene)
+    glUseProgram(shaderProgramIdColored);
     {
         //envoie de la rotation
-        glUniformMatrix4fv(get_uni_loc(shaderProgramId,"rotation_view"),1,false, currentWindow->localPlayer->rotation.pointeur()); PRINT_OPENGL_ERROR();
+        glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored,"rotation_view"),1,false, currentWindow->localPlayer->rotation.pointeur()); PRINT_OPENGL_ERROR();
 
         //envoie du centre de rotation
         vec3 cv = currentWindow->localPlayer->rotationCenter;
-        glUniform4f(get_uni_loc(shaderProgramId,"rotation_center_view") , cv.x,cv.y,cv.z , 0.0f); PRINT_OPENGL_ERROR();
+        glUniform4f(get_uni_loc(shaderProgramIdColored,"rotation_center_view") , cv.x,cv.y,cv.z , 0.0f); PRINT_OPENGL_ERROR();
 
         //envoie de la translation
         vec3 tv = currentWindow->localPlayer->translation;
-        glUniform4f(get_uni_loc(shaderProgramId,"translation_view") , tv.x,tv.y,tv.z , 0.0f); PRINT_OPENGL_ERROR();
+        glUniform4f(get_uni_loc(shaderProgramIdColored,"translation_view") , tv.x,tv.y,tv.z , 0.0f); PRINT_OPENGL_ERROR();
+    }
+        // Affecte les parametres uniformes de la vue (identique pour tous les modeles de la scene)
+    glUseProgram(shaderProgramIdTextured);
+    {
+        //envoie de la rotation
+        glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured,"rotation_view"),1,false, currentWindow->localPlayer->rotation.pointeur()); PRINT_OPENGL_ERROR();
+
+        //envoie du centre de rotation
+        vec3 cv = currentWindow->localPlayer->rotationCenter;
+        glUniform4f(get_uni_loc(shaderProgramIdTextured,"rotation_center_view") , cv.x,cv.y,cv.z , 0.0f); PRINT_OPENGL_ERROR();
+
+        //envoie de la translation
+        vec3 tv = currentWindow->localPlayer->translation;
+        glUniform4f(get_uni_loc(shaderProgramIdTextured,"translation_view") , tv.x,tv.y,tv.z , 0.0f); PRINT_OPENGL_ERROR();
     }
     
     for(std::vector<Entity>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
         it->Draw(currentWindow->localPlayer->getCamPosition());
+        
     }
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
@@ -167,7 +183,6 @@ void MainWindow::timerCallback(int)
     {
         
         float dist = (*it.base()).getPlane().normal.dot(currentWindow->localPlayer->getCamPosition())-(*it.base()).getPlane().dist;
-        std::cout << dist << std::endl;
         currentWindow->localPlayer->correctPosition(*it.base());
         /*
         if(currentWindow->localPlayer->checkCollision(*it.base()))
@@ -185,17 +200,26 @@ void MainWindow::timerCallback(int)
 void MainWindow::loadData()
 {
     // Chargement du shader
-    shaderProgramId = read_shader("data/shader.vert", "data/shader.frag");
+    shaderProgramIdColored = read_shader("data/color.vert", "data/color.frag");
+    shaderProgramIdTextured = read_shader("data/shader.vert", "data/shader.frag");
 
+    glUseProgram(shaderProgramIdColored);
     //matrice de projection
     projection = mat4::matrice_projection(80.0f*M_PI/180.0f,16.0f/9.0f,0.01f,100.0f);
-    glUniformMatrix4fv(get_uni_loc(shaderProgramId,"projection"),1,false,projection.pointeur()); PRINT_OPENGL_ERROR();
+    glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored,"projection"),1,false,projection.pointeur()); PRINT_OPENGL_ERROR();
 
-    localPlayer = new Player();
+    //activation de la gestion de la profondeur
+    glEnable(GL_DEPTH_TEST); PRINT_OPENGL_ERROR();
+    
+    glUseProgram(shaderProgramIdTextured);    
+    projection = mat4::matrice_projection(80.0f*M_PI/180.0f,16.0f/9.0f,0.01f,100.0f);
+    glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured,"projection"),1,false,projection.pointeur()); PRINT_OPENGL_ERROR();
 
     //activation de la gestion de la profondeur
     glEnable(GL_DEPTH_TEST); PRINT_OPENGL_ERROR();
 
+
+    localPlayer = new Player();
     //props.push_back(Table());
     props.push_back(Floor());
 

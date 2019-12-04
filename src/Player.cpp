@@ -62,14 +62,12 @@ void Player::correctPosition(Entity other)
     if(other.getMode() == MODE_PLANE)
     {
         float verticalProj = (other.getPlane().normal.y == 0.0f ? 0.0f : other.getPlane().normal.dot(vec3((aabb.max.x+aabb.min.x)*0.5f, 0.0f, (aabb.max.z+aabb.min.z)*0.5f))+other.getPlane().dist) / other.getPlane().normal.y;
-        std::cout << aabb.min.y << ", " << verticalProj << ", " << aabb.max.y << std::endl;
         if(verticalProj<=aabb.min.y || verticalProj>=aabb.max.y)//not vertially colliding (centered)
             return;
         if(verticalProj-aabb.min.y < aabb.max.y - verticalProj)
             move(0.0f, verticalProj-aabb.min.y, 0.0f);
         else
             move(0.0f, aabb.max.y - verticalProj, 0.0f);
-        std::cout << "1" << std::endl;
     }
     else
     {

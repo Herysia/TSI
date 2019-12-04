@@ -4,7 +4,9 @@
 #include "glutils.hpp"
 #include "image.hpp"
 
-extern GLuint shaderProgramId;
+extern GLuint shaderProgramIdColored;
+extern GLuint shaderProgramIdTextured;
+
 #define Abs(x) (x>=0 ? x : -x)
 typedef struct keyboardKeyState
 {
@@ -23,6 +25,7 @@ typedef struct keyboardKeyState
 };
 inline void loadTexture(const char* filename,GLuint *texture_id)
 {
+    glUseProgram(shaderProgramIdTextured);
     // Chargement d'une texture (seul les textures tga sont supportes)
     Image  *image = image_load_tga(filename);
     if (image) //verification que l'image est bien chargee
@@ -57,7 +60,7 @@ inline void loadTexture(const char* filename,GLuint *texture_id)
         abort();
     }
 
-    glUniform1i (get_uni_loc(shaderProgramId, "texture"), 0); PRINT_OPENGL_ERROR();
+    glUniform1i (get_uni_loc(shaderProgramIdTextured, "texture"), 0); PRINT_OPENGL_ERROR();
 }
 
 #endif //GLOBAL_H

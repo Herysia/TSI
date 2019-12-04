@@ -10,7 +10,8 @@
 #include "glutils.hpp"
 #include "global.hpp"
 
-GLuint shaderProgramId;
+GLuint shaderProgramIdColored;
+GLuint shaderProgramIdTextured;
 int main(int argc, char** argv)
 {
     MainWindow main = MainWindow();
