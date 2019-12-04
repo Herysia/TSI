@@ -37,6 +37,8 @@ class vec2
     /** Produit scalaire */
     float dot(const vec2& v1);
 
+    float cross(const vec2& v1);
+
     /** Renvoie un vecteur de meme direction de norme 1 */
     vec2 normalize() const;
 

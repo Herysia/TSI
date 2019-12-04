@@ -83,7 +83,7 @@ void Player::correctPosition(Entity other)
         if(verticalProj<=aabb.min.y || verticalProj>=aabb.max.y)//not vertially colliding (centered)
             return;
 
-        if(other.getPlane().check2Dcoord(aabb))
+        if(!other.getPlane().check2Dcoord(aabb))
             return;
         if(verticalProj-aabb.min.y < aabb.max.y - verticalProj)
             move(0.0f, verticalProj-aabb.min.y, 0.0f);

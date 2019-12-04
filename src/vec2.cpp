@@ -58,6 +58,11 @@ float vec2::dot(const vec2& v1)
     return x*v1.x + y*v1.y;
 }
 
+float vec2::cross(const vec2& v1)
+{
+    return y*v1.x - x*v1.y;
+}
+
 vec2 vec2::normalize() const
 {
     vec2 temp = *this;

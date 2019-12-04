@@ -17,7 +17,7 @@ Floor::Floor()
     vec3 n2=n0;
     vec3 n3=n0;
 
-    plane = Plane(p0,p1,p2);
+    plane = Plane(p0,p1,p2,p3);
     //couleur pour chaque sommet
     vec3 c0=vec3(1.0f,1.0f,1.0f);
     vec3 c1=c0;
