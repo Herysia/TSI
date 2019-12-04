@@ -14,7 +14,7 @@ void Entity::Draw(const vec3& camPosition)
         glUniformMatrix4fv(get_uni_loc(shaderProgramId,"rotation_model"),1,false,rotation.pointeur());    PRINT_OPENGL_ERROR();
 
         glUniform4f(get_uni_loc(shaderProgramId,"rotation_center_model") , rotationCenter.x,rotationCenter.y,rotationCenter.z , 0.0f);                                 PRINT_OPENGL_ERROR();
-        glUniform4f(get_uni_loc(shaderProgramId,"translation_model") , translation.x-camPosition.x,translation.y-camPosition.y, translation.z+camPosition.z , 0.0f);                                     PRINT_OPENGL_ERROR();
+        glUniform4f(get_uni_loc(shaderProgramId,"translation_model") , translation.x-camPosition.x,translation.y-camPosition.y, translation.z-camPosition.z , 0.0f);                                     PRINT_OPENGL_ERROR();
         if(isColored())
             glUniform3f(get_uni_loc(shaderProgramId,"color_model") , color.x, color.y, color.z);                                     PRINT_OPENGL_ERROR();
     
@@ -48,35 +48,9 @@ void Entity::Draw(const vec3& camPosition)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,vboi);                           PRINT_OPENGL_ERROR();
         if(isTextured())
             glBindTexture(GL_TEXTURE_2D, textureId);                             PRINT_OPENGL_ERROR();
-        glDrawElements(GL_TRIANGLES, 3*nbTriangles, GL_UNSIGNED_INT, 0);     PRINT_OPENGL_ERROR();
+        
+        //glDrawElements(GL_LINE_LOOP, 3*nbTriangles, GL_UNSIGNED_INT, 0);     PRINT_OPENGL_ERROR();
+        //glDrawElements(GL_TRIANGLES, 3*nbTriangles, GL_UNSIGNED_INT, 0);     PRINT_OPENGL_ERROR();
     }
 }
 
-
-bool Entity::checkCollision(Entity other)
-{
-    bool ret = false;
-    if(mode == MODE_PLANE)
-    {
-        if(other.mode == MODE_PLANE)
-        {
-            ret = plane.isColliding(other.plane);
-        }
-        else
-        {
-            ret = plane.isColliding(other.aabb);
-        }
-    }
-    else
-    {
-        if(other.mode == MODE_PLANE)
-        {
-            ret = other.plane.isColliding(aabb);
-        }
-        else
-        {
-            ret = aabb.isColliding(other.aabb);
-        }
-    }
-    return ret;
-}

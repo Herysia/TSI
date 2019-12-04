@@ -32,8 +32,8 @@ private:
     vec3 speed;
     bool isOnGround;
 
-    void applyVerticalCollision(const Entity& other);
-    void applyHorizontalCollision(const Entity& other);
+    void applyVerticalCollision(const Plane& other);
+    void applyHorizontalCollision(const AABB& other);
     
 protected:
 };

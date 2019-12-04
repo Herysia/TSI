@@ -42,9 +42,9 @@ vec2& vec2::operator/=(float s)
     return *this;
 }
 
-std::ostream& vec2::operator<<(std::ostream& sout)
+std::ostream& operator<<(std::ostream& sout, const vec2& vec)
 {
-    sout<< x <<","<< y;
+    sout<< vec.x <<","<< vec.y;
     return sout;
 }
 

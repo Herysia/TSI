@@ -41,9 +41,8 @@ class vec2
 
     /** Renvoie un vecteur de meme direction de norme 1 */
     vec2 normalize() const;
-
     /** Affichage d'un vecteur sur la ligne de commande */
-    std::ostream& operator<<(std::ostream& sout);
+    friend std::ostream& operator<<(std::ostream& sout, const vec2& vec);
 
 };
 

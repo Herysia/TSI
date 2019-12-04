@@ -2,19 +2,19 @@
 
 Table::Table(float scalex, float scaley, float scalez)
 {
-    //m = load_obj_file("../data/Minimalist Dining Table.obj");
+    shaderProgramId = shaderProgramIdColored;
+    glUseProgram(shaderProgramId);
+    m = load_obj_file("../data/Minimalist Dining Table.obj");
     
-    m = load_obj_file("../data/stegosaurus.obj");
+    //m = load_obj_file("../data/stegosaurus.obj");
     
     rotationCenter = vec3();
     rotation = mat4();
     translation = vec3();
 
-    // Affecte une transformation sur les sommets du maillage
-    float s = 0.2f;
-    mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
-                          0.0f,    s, 0.0f,-0.9f,
-                          0.0f, 0.0f,   s ,-2.0f,
+    mat4 transform = mat4(   scalex, 0.0f, 0.0f, 0.0f,
+                          0.0f,    scaley, 0.0f, 0.0f,
+                          0.0f, 0.0f,   scalez , 0.0f,
                           0.0f, 0.0f, 0.0f, 1.0f);
     apply_deformation(&m,transform);
 
@@ -39,6 +39,30 @@ Table::Table(float scalex, float scaley, float scalez)
     // Nombre de triangles de l'objet 1
     nbTriangles = m.connectivity.size();
 
-    // Chargement de la texture
-    loadTexture("../data/stegosaurus.tga",&textureId);
+    vec3 min = m.vertex[0].position;
+    vec3 max = m.vertex[0].position;
+    for(unsigned int idx=0, N=m.vertex.size(); idx<N; ++idx)
+    {
+        //x
+        if(m.vertex[idx].position.x < min.x)
+            min.x = m.vertex[idx].position.x;
+        else if(m.vertex[idx].position.x > max.x)
+            max.x = m.vertex[idx].position.x;
+
+        //y
+        if(m.vertex[idx].position.y < min.y)
+            min.y = m.vertex[idx].position.y;
+        else if(m.vertex[idx].position.y > max.y)
+            max.y = m.vertex[idx].position.y;
+
+        //z
+        if(m.vertex[idx].position.z < min.z)
+            min.z = m.vertex[idx].position.z;
+        else if(m.vertex[idx].position.z > max.z)
+            max.z = m.vertex[idx].position.z;
+    }
+    aabb = AABB(min, max);
+    std::cout << min << std::endl;
+    std::cout << max << std::endl;
+
 }

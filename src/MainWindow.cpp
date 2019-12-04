@@ -90,8 +90,8 @@ void MainWindow::displayCallback()
         glUniform4f(get_uni_loc(shaderProgramIdTextured,"translation_view") , tv.x,tv.y,tv.z , 0.0f); PRINT_OPENGL_ERROR();
     }
     
-    for(std::vector<Entity>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
-        it->Draw(currentWindow->localPlayer->getCamPosition());
+    for(std::vector<Entity*>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it){
+        (*it)->Draw(currentWindow->localPlayer->getCamPosition());
         
     }
     //Changement de buffer d'affichage pour eviter un effet de scintillement
@@ -146,13 +146,14 @@ void MainWindow::handleInput()
     vec3 dir((currentWindow->keyState.forward - currentWindow->keyState.backward) * sin(currentWindow->localPlayer->getViewAngle().y)
             +(currentWindow->keyState.right - currentWindow->keyState.left) * cos(currentWindow->localPlayer->getViewAngle().y)
             ,0.0f 
-            , (currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->getViewAngle().y)
-            -(currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->getViewAngle().y));
+            , (currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->getViewAngle().y)
+            -(currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->getViewAngle().y)
+            );
     
-    currentWindow->localPlayer->setHorizontalSpeed(dir.normalize()*0.1f);
+    currentWindow->localPlayer->setHorizontalSpeed(dir.normalize()*0.02f);
     currentWindow->localPlayer->handleJump(currentWindow->keyState.jump);
-    currentWindow->localPlayer->rotateAngle((currentWindow->keyState.view.up - currentWindow->keyState.view.down)*0.1f,
-                                            (currentWindow->keyState.view.right - currentWindow->keyState.view.left)*0.1f,
+    currentWindow->localPlayer->rotateAngle((currentWindow->keyState.view.up - currentWindow->keyState.view.down)*0.02f,
+                                            (currentWindow->keyState.view.right - currentWindow->keyState.view.left)*0.02f,
                                             0.0f);
 }
 void MainWindow::mouseCallback(int x, int y)
@@ -160,7 +161,7 @@ void MainWindow::mouseCallback(int x, int y)
     float centerx = glutGet(GLUT_WINDOW_X) + glutGet(GLUT_WINDOW_WIDTH) / 2.f;
 	float centery = glutGet(GLUT_WINDOW_Y) + glutGet(GLUT_WINDOW_HEIGHT) / 2.f;
 	float d_angle = 0.1f;
-	float sensitivity = 0.25f;
+	float sensitivity = 0.05f;
 
 	//Confine mouse
 	glutWarpPointer(centerx, centery);
@@ -175,16 +176,17 @@ void MainWindow::mouseCallback(int x, int y)
 }
 void MainWindow::timerCallback(int)
 {
-    //demande de rappel de cette fonction dans 25ms
-    glutTimerFunc(25, timerCallback, 0);
+    //demande de rappel de cette fonction dans 5ms //engine
+    static short i=0;
+    glutTimerFunc(5, timerCallback, 0);
 
     currentWindow->localPlayer->updateView();
     currentWindow->handleInput();
     currentWindow->localPlayer->applyPhysics();
-    for(std::vector<Entity>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
+    for(std::vector<Entity*>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
     {
         
-        currentWindow->localPlayer->correctPosition(*it.base());
+        currentWindow->localPlayer->correctPosition(**it.base());
         /*
         if(currentWindow->localPlayer->checkCollision(*it.base()))
         {
@@ -194,8 +196,14 @@ void MainWindow::timerCallback(int)
     }
 
 
-    //reactualisation de l'affichage
-    glutPostRedisplay();
+    //reactualisation de l'affichage (toutes les 25ms)
+    if(i>=5)
+    {
+        glutPostRedisplay();
+        i=0;
+    }
+    i++;
+
 }
 
 void MainWindow::loadData()
@@ -221,9 +229,12 @@ void MainWindow::loadData()
 
 
     localPlayer = new Player();
-    //props.push_back(Table());
-    props.push_back(Floor());
-
+    //props.push_back(Table(0.01f, 0.01f, 0.01f));
+    //props.push_back(Table(0.02f, 0.02f, 0.02f));
+    //props.push_back(RectangularBlock(props.back().getAABB().min, props.back().getAABB().max));
+    props.push_back(new RectangularBlock(vec3(-0.84307,-0.00833333,-0.89307)+vec3(3,0,3), vec3(0.84307,0.911293,0.89307)+vec3(3,0,3)));
+    props.push_back(new RectangularBlock(vec3(-10.0f, -1.0f, -10.0f), vec3(10.0f,30.0f,10.0f), true));
+    props.push_back(new Floor());
 }
 
 void MainWindow::Run()

@@ -18,9 +18,8 @@ public:
     float dist;
     bool isInfinite;
     bool collideVertically = false;
-    bool isColliding(AABB other);
-    bool isColliding(Plane other);
-    bool check2Dcoord(AABB other);
+    bool isColliding(const Plane& other) const;
+    bool check2Dcoord(const AABB& other) const;
 private:
     vec3 p1, p2, p3, p4;
 };

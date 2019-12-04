@@ -17,6 +17,7 @@
 #include "Table.hpp"
 #include "Floor.hpp"
 #include "Player.hpp"
+#include "rectangularBlock.hpp"
 
 class MainWindow
 {    
@@ -32,7 +33,7 @@ private:
 
     mat4 projection;
     Player* localPlayer;
-    std::vector<Entity> props;
+    std::vector<Entity*> props;
 
     keyboardKeyState keyState;
 

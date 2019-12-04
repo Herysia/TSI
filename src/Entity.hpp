@@ -22,10 +22,9 @@ public:
     vec3 rotationCenter;
     vec3 translation;
 
-    void Draw(const vec3& camPosition);
+    virtual void Draw(const vec3& camPosition);
     GLuint textureId;
     vec3 color;
-    bool checkCollision(Entity other);
 
     inline CollisionMode getMode() const
     {
@@ -41,7 +40,6 @@ public:
     }
 
 private:
-    GLuint shaderProgramId;
     inline bool isColored()
     {
         return shaderProgramId == shaderProgramIdColored;
@@ -60,6 +58,7 @@ protected:
     Plane plane;
     AABB aabb;
     CollisionMode mode;
+    GLuint shaderProgramId;
     
 };
 
