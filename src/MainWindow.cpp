@@ -184,7 +184,6 @@ void MainWindow::timerCallback(int)
     for(std::vector<Entity>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
     {
         
-        float dist = (*it.base()).getPlane().normal.dot(currentWindow->localPlayer->getCamPosition())-(*it.base()).getPlane().dist;
         currentWindow->localPlayer->correctPosition(*it.base());
         /*
         if(currentWindow->localPlayer->checkCollision(*it.base()))

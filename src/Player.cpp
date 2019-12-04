@@ -75,24 +75,36 @@ void Player::clampViewAngle()
     viewAngle = viewAngle.clamp();
 }
 
-void Player::correctPosition(Entity other)
+void Player::applyVerticalCollision(const Entity& other)
+{        
+    //Vertical collision
+    float verticalProj = (other.getPlane().normal.y == 0.0f ? 0.0f : other.getPlane().normal.dot(vec3((aabb.max.x+aabb.min.x)*0.5f, 0.0f, (aabb.max.z+aabb.min.z)*0.5f))+other.getPlane().dist) / other.getPlane().normal.y;
+    if(verticalProj<=aabb.min.y || verticalProj>=aabb.max.y)//not vertially colliding (centered)
+        return;
+
+    if(!other.getPlane().check2Dcoord(aabb))
+        return;
+    if(verticalProj-aabb.min.y < aabb.max.y - verticalProj)
+        move(0.0f, verticalProj-aabb.min.y, 0.0f);
+    else
+        move(0.0f, aabb.max.y - verticalProj, 0.0f);
+    speed.y = 0.0f;
+    isOnGround = true;
+}
+void Player::applyHorizontalCollision(const Entity& other)
+{
+    
+}
+void Player::correctPosition(const Entity& other)
 {
     if(other.getMode() == MODE_PLANE)
     {
-        float verticalProj = (other.getPlane().normal.y == 0.0f ? 0.0f : other.getPlane().normal.dot(vec3((aabb.max.x+aabb.min.x)*0.5f, 0.0f, (aabb.max.z+aabb.min.z)*0.5f))+other.getPlane().dist) / other.getPlane().normal.y;
-        if(verticalProj<=aabb.min.y || verticalProj>=aabb.max.y)//not vertially colliding (centered)
-            return;
-
-        if(!other.getPlane().check2Dcoord(aabb))
-            return;
-        if(verticalProj-aabb.min.y < aabb.max.y - verticalProj)
-            move(0.0f, verticalProj-aabb.min.y, 0.0f);
+        if(other.getPlane().collideVertically)
+            applyVerticalCollision(other);
         else
-            move(0.0f, aabb.max.y - verticalProj, 0.0f);
-        speed.y = 0.0f;
-        isOnGround = true;
+            applyHorizontalCollision(other);
     }
-    else
+    else // AABB-AABB collision
     {
         
     }

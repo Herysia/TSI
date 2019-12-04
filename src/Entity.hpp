@@ -27,15 +27,15 @@ public:
     vec3 color;
     bool checkCollision(Entity other);
 
-    inline CollisionMode getMode()
+    inline CollisionMode getMode() const
     {
         return mode;
     }
-    inline Plane getPlane()
+    inline Plane getPlane() const
     {
         return plane;
     }
-    inline AABB getAABB()
+    inline AABB getAABB() const
     {
         return aabb;
     }

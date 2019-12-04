@@ -21,7 +21,7 @@ public:
     void rotateAngle(vec3 dist);
     vec3 getViewAngle();
     void clampViewAngle();
-    void correctPosition(Entity other);
+    void correctPosition(const Entity& other);
     void setHorizontalSpeed(vec3 horizontalSpeed);
     void handleJump(bool jumpKey);
 private:
@@ -31,6 +31,10 @@ private:
 
     vec3 speed;
     bool isOnGround;
+
+    void applyVerticalCollision(const Entity& other);
+    void applyHorizontalCollision(const Entity& other);
+    
 protected:
 };
 

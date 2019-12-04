@@ -5,6 +5,7 @@ Plane::Plane(vec3 normal, float d)
     this->normal = normal;
     this->dist = d;
     isInfinite = true;
+    
 }
 Plane::Plane(vec3 p1, vec3 p2, vec3 p3)
 {
@@ -14,7 +15,7 @@ Plane::Plane(vec3 p1, vec3 p2, vec3 p3)
     normal = u.cross(v).normalize();
     dist = normal.dot(p1);
 }
-Plane::Plane(vec3 p1, vec3 p2, vec3 p3, vec3 p4)
+Plane::Plane(vec3 p1, vec3 p2, vec3 p3, vec3 p4, bool vert)
 {
     isInfinite = false;
     this->p1=p1;this->p2=p2;this->p3=p3;this->p4=p4;
@@ -22,6 +23,7 @@ Plane::Plane(vec3 p1, vec3 p2, vec3 p3, vec3 p4)
     vec3 v = p3 - p1;
     normal = u.cross(v).normalize();
     dist = normal.dot(p1);
+    collideVertically = vert;
 }
 //TODO reformat + check plan boudaries (2D)
 bool Plane::isColliding(AABB other)
