@@ -29,7 +29,7 @@ void update_normals(mesh *m)
     const std::vector<triangle_index> &c = m->connectivity;
 
     //compute star
-    std::map<int, std::list<int>> star;
+    std::map<int, std::list<int> > star;
     for (unsigned int k = 0, N = c.size(); k < N; ++k)
     {
         const triangle_index &t = c[k];

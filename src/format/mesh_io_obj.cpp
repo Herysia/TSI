@@ -83,7 +83,7 @@ void read_normal_obj(std::stringstream &tokens, obj_structure &obj)
 
 void read_face_obj(std::stringstream &tokens, obj_structure &obj)
 {
-    std::vector<std::vector<int>> face_data;
+    std::vector<std::vector<int> > face_data;
     while (tokens.good())
     {
         std::string polygon_index_str;

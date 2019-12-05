@@ -40,9 +40,9 @@ struct obj_structure
     std::vector<vec2> data_texture; //the coordinates of textures (optional)
     std::vector<vec3> data_normal;  //the coordinates of normals (optional)
 
-    std::vector<std::vector<int>> data_face_vertex;  //the indices of the polygon of vertices
-    std::vector<std::vector<int>> data_face_texture; //the indices of the polygon of texture (optional)
-    std::vector<std::vector<int>> data_face_normal;  //the indices of the polygon of normal (optional)
+    std::vector<std::vector<int> > data_face_vertex;  //the indices of the polygon of vertices
+    std::vector<std::vector<int> > data_face_texture; //the indices of the polygon of texture (optional)
+    std::vector<std::vector<int> > data_face_normal;  //the indices of the polygon of normal (optional)
 };
 
 /** Split a given string of face f from obj style into a set of values.
