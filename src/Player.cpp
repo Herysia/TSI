@@ -74,52 +74,55 @@ void Player::clampViewAngle()
     viewAngle = viewAngle.clamp();
 }
 
-void Player::applyVerticalCollision(const Plane &other)
+bool Player::applyVerticalCollision(const Plane &other)
 {
     //Vertical collision
     float verticalProj = (other.normal.y == 0.0f ? 0.0f : other.normal.dot(vec3((aabb.max.x + aabb.min.x) * 0.5f, 0.0f, (aabb.max.z + aabb.min.z) * 0.5f)) + other.dist) / other.normal.y;
     if (verticalProj <= aabb.min.y || verticalProj >= aabb.max.y) //not vertially colliding gravity center
-        return;
+        return false;
 
-    std::cout << vec3(verticalProj, aabb.min.y, speed.y) << std::endl;
-    if ((verticalProj > aabb.min.y && verticalProj <= aabb.min.y - 2 * speed.y)) //too far inside, should not collide
+    if ((verticalProj > aabb.min.y && verticalProj > aabb.min.y - speed.y)) //too far inside, should not collide
     //  ||  (verticalProj<aabb.max.y && verticalProj >= aabb.min.y-2*speed.y))
     {
-        std::cout << "Too far inside" << std::endl;
-        return;
+        //std::cout << "Warning: Too far inside" << std::endl;
+        return false;
     }
 
     if (!other.check2Dcoord(aabb))
-        return;
+        return false;
     if (verticalProj - aabb.min.y < aabb.max.y - verticalProj)
         move(0.0f, verticalProj - aabb.min.y, 0.0f);
     else
         move(0.0f, aabb.max.y - verticalProj, 0.0f);
     speed.y = 0.0f;
     isOnGround = true;
+    return true;
 }
-void Player::applyVerticalCollision(const AABB &other)
+bool Player::applyVerticalCollision(const AABB &other)
 {
+    bool ret=false;
     if ((!other.shouldBeInside && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x) //overlapping on x axis;
          && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)                       //overlapping on y axis;
          && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z)))                     //overlapping on z axis;
     {
+
         vec3 p1(other.min.x, other.max.y, other.min.z);
         vec3 p2(other.max.x, other.max.y, other.min.z);
         vec3 p3(other.max.x, other.max.y, other.max.z);
         vec3 p4(other.min.x, other.max.y, other.max.z);
         Plane plane = Plane(p1, p2, p3, p4, true);
-        applyVerticalCollision(plane);
+        ret|=applyVerticalCollision(plane);
 
         p1.y = other.min.y;
         p2.y = other.min.y,
         p3.y = other.min.y,
         p4.y = other.min.y,
         plane = Plane(p1, p2, p3, p4, true);
-        applyVerticalCollision(plane);
+        ret|=applyVerticalCollision(plane);
     }
+    return ret;
 }
-void Player::applyHorizontalCollision(const AABB &other)
+bool Player::applyHorizontalCollision(const AABB &other)
 {
     if ((!other.shouldBeInside && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x) //overlapping on x axis;
          && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)                       //overlapping on y axis;
@@ -151,8 +154,13 @@ void Player::applyHorizontalCollision(const AABB &other)
             move(0.0f, 0.0f, -(b + sizeDelta.z));
         }
         else
+        {
             std::cout << "Warning: collision error due to precision" << std::endl;
+            return false;
+        }
+        return true;
     }
+    return false;
 }
 void Player::correctPosition(const Entity &other)
 {
@@ -164,7 +172,7 @@ void Player::correctPosition(const Entity &other)
     }
     else //We use  AABB-AABB collision for walls and objects (simple)
     {
-        applyVerticalCollision(other.getAABB());
-        //applyHorizontalCollision(other.getAABB());
+        if(!applyVerticalCollision(other.getAABB()))
+            applyHorizontalCollision(other.getAABB());
     }
 }
