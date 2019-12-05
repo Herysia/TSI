@@ -8,7 +8,6 @@ Entity::Entity()
 
 void Entity::Draw(const vec3 &camPosition)
 {
-    return;
     glUseProgram(shaderProgramId);
     //envoie des parametres uniformes
     {

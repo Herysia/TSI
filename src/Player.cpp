@@ -77,16 +77,18 @@ void Player::clampViewAngle()
 bool Player::applyVerticalCollision(const Plane &other)
 {
     //Vertical collision
-    float verticalProj = (other.normal.y == 0.0f ? 0.0f : other.normal.dot(vec3((aabb.max.x + aabb.min.x) * 0.5f, 0.0f, (aabb.max.z + aabb.min.z) * 0.5f)) + other.dist) / other.normal.y;
+    float verticalProj = (Abs(other.normal.y) <= 0.0001f ? 0.0f : other.normal.dot(vec3((aabb.max.x + aabb.min.x) * 0.5f, 0.0f, -(aabb.max.z + aabb.min.z) * 0.5f)) + other.dist) / other.normal.y;
+    std::cout << verticalProj << std::endl;
     if (verticalProj <= aabb.min.y || verticalProj >= aabb.max.y) //not vertially colliding gravity center
         return false;
 
-    if ((verticalProj > aabb.min.y && verticalProj > aabb.min.y - speed.y)) //too far inside, should not collide
-    //  ||  (verticalProj<aabb.max.y && verticalProj >= aabb.min.y-2*speed.y))
-    {
-        //std::cout << "Warning: Too far inside" << std::endl;
-        return false;
-    }
+    //TODO TOFIX angled surface will trigger this check, but it shouldn't
+    // if ((verticalProj > aabb.min.y && verticalProj > aabb.min.y - speed.y)) //too far inside, should not collide
+    // //  ||  (verticalProj<aabb.max.y && verticalProj >= aabb.min.y-2*speed.y))
+    // {
+    //     //std::cout << "Warning: Too far inside" << std::endl;
+    //     return false;
+    // }
 
     if (!other.check2Dcoord(aabb))
         return false;
@@ -101,9 +103,9 @@ bool Player::applyVerticalCollision(const Plane &other)
 bool Player::applyVerticalCollision(const AABB &other)
 {
     bool ret=false;
-    if ((!other.shouldBeInside && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x) //overlapping on x axis;
+    if ((aabb.min.x <= other.max.x && aabb.max.x >= other.min.x) //overlapping on x axis;
          && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)                       //overlapping on y axis;
-         && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z)))                     //overlapping on z axis;
+         && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))                     //overlapping on z axis;
     {
 
         vec3 p1(other.min.x, other.max.y, other.min.z);
@@ -127,7 +129,10 @@ bool Player::applyHorizontalCollision(const AABB &other)
     if ((!other.shouldBeInside && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x) //overlapping on x axis;
          && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)                       //overlapping on y axis;
          && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))                      //overlapping on z axis;
-        || (other.shouldBeInside && (aabb.max.x >= other.max.x || aabb.min.x <= other.min.x || aabb.max.z >= other.max.z || aabb.min.z <= other.min.z) && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
+        || (other.shouldBeInside 
+        && (aabb.max.x >= other.max.x || aabb.min.x <= other.min.x 
+            || aabb.max.z >= other.max.z || aabb.min.z <= other.min.z) 
+        && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
     {
         vec2 coord2D = aabb.getCenter2D();
         //find closest face
@@ -172,7 +177,7 @@ void Player::correctPosition(const Entity &other)
     }
     else //We use  AABB-AABB collision for walls and objects (simple)
     {
-        if(!applyVerticalCollision(other.getAABB()))
+        if(!applyVerticalCollision(other.getAABB()) || other.getAABB().shouldBeInside)
             applyHorizontalCollision(other.getAABB());
     }
 }

@@ -204,6 +204,7 @@ void MainWindow::timerCallback(int)
 void MainWindow::loadData()
 {
     // Chargement du shader
+    //TODO: shader for planes // color rendering for floor
     shaderProgramIdColored = read_shader("data/color.vert", "data/color.frag");
     shaderProgramIdTextured = read_shader("data/shader.vert", "data/shader.frag");
 
@@ -230,9 +231,9 @@ void MainWindow::loadData()
     //props.push_back(Table(0.01f, 0.01f, 0.01f));
     //props.push_back(Table(0.02f, 0.02f, 0.02f));
     //props.push_back(RectangularBlock(props.back().getAABB().min, props.back().getAABB().max));
-    props.push_back(new Floor());
+    //props.push_back(new Floor());
     props.push_back(new RectangularBlock(vec3(3, -1, 3), vec3(6, 0, 6)));
-    //props.push_back(new RectangularBlock(vec3(-10.0f, -1.0f, -10.0f), vec3(10.0f, 30.0f, 10.0f), true));
+    props.push_back(new RectangularBlock(vec3(-10.0f, -1.0f, -10.0f), vec3(10.0f, 30.0f, 10.0f), true));
 }
 
 void MainWindow::Run()

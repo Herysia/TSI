@@ -3,8 +3,9 @@
 
 Floor::Floor()
 {
-    shaderProgramId = shaderProgramIdTextured;
+    shaderProgramId = shaderProgramIdColored;
     glUseProgram(shaderProgramId);
+    color = vec3(0.42f, 1.0f, 0.42f);
     //Creation manuelle du model 2
     mode = MODE_PLANE;
     //coordonnees geometriques des sommets
