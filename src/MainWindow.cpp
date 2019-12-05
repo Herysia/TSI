@@ -232,7 +232,7 @@ void MainWindow::loadData()
     //props.push_back(Table(0.02f, 0.02f, 0.02f));
     //props.push_back(RectangularBlock(props.back().getAABB().min, props.back().getAABB().max));
     props.push_back(new Floor());
-    props.push_back(new RectangularBlock(vec3(-0.84307,-0.00833333,-0.89307)+vec3(3,0,3), vec3(0.84307,0.911293,0.89307)+vec3(3,0,3)));
+    props.push_back(new RectangularBlock(vec3(-0.84307,-0.00833333,-0.89307)+vec3(3,1,3), vec3(0.84307,0.911293,0.89307)+vec3(3,1,3)));
     props.push_back(new RectangularBlock(vec3(-10.0f, -1.0f, -10.0f), vec3(10.0f,30.0f,10.0f), true));
 
 }

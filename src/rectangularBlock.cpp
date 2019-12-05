@@ -14,11 +14,11 @@ RectangularBlock::RectangularBlock(vec3 min, vec3 max, bool shouldBeInside)
     blb------brb            frb = front-right-bottom
     x                    flb = front-left-bottom
     */
+    this->min = min;
+    this->max = max;
     aabb = AABB(min, max);
     aabb.shouldBeInside = shouldBeInside;
     color = vec3(1.0f, 1.0f, 1.0f);
-    glUniform3f(get_uni_loc(shaderProgramId,"min") , min.x, min.y, min.z);PRINT_OPENGL_ERROR();
-    glUniform3f(get_uni_loc(shaderProgramId,"max") , max.x, max.y, max.z);PRINT_OPENGL_ERROR();
     //coordonnees geometriques des sommets
     // vec3 blb(min.x, min.y, min.z);//blb=0
     // vec3 brb(max.x, min.y, min.z);//brb=1

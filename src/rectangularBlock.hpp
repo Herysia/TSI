@@ -18,7 +18,8 @@ public:
             glUniform4f(get_uni_loc(shaderProgramId,"rotation_center_model") , rotationCenter.x,rotationCenter.y,rotationCenter.z , 0.0f);                                 PRINT_OPENGL_ERROR();
             glUniform4f(get_uni_loc(shaderProgramId,"translation_model") , translation.x-camPosition.x,translation.y-camPosition.y, translation.z-camPosition.z , 0.0f);                                     PRINT_OPENGL_ERROR();
             glUniform3f(get_uni_loc(shaderProgramId,"color_model") , color.x, color.y, color.z);                                     PRINT_OPENGL_ERROR();
-        
+            glUniform3f(get_uni_loc(shaderProgramId,"min") , min.x, min.y, min.z);PRINT_OPENGL_ERROR();
+            glUniform3f(get_uni_loc(shaderProgramId,"max") , max.x, max.y, max.z);PRINT_OPENGL_ERROR();
         }
         glBindBuffer(GL_ARRAY_BUFFER,vbo);
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -29,6 +30,7 @@ public:
   }
 private:
 protected:
+    vec3 min, max;
 
 };
 
