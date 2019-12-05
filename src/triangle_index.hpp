@@ -18,13 +18,7 @@ struct triangle_index
     /** Constructeur indice (0,0,0) */
     triangle_index();
     /** Constructeur indice (u0,u1,u2) */
-    triangle_index(unsigned int u0_param,unsigned int u1_param,unsigned int u2_param);
+    triangle_index(unsigned int u0_param, unsigned int u1_param, unsigned int u2_param);
 };
-
-
-
-
-
-
 
 #endif

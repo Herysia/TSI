@@ -19,10 +19,10 @@ struct vertex_opengl
     /** Constructeur avec vecteurs par defauts */
     vertex_opengl();
     /** Constructeur avec valeur specifiques */
-    vertex_opengl(const vec3& position,
-                  const vec3& normal,
-                  const vec3& color,
-                  const vec2& texture);
+    vertex_opengl(const vec3 &position,
+                  const vec3 &normal,
+                  const vec3 &color,
+                  const vec2 &texture);
 };
 
 #endif

@@ -33,54 +33,60 @@ RectangularBlock::RectangularBlock(vec3 min, vec3 max, bool shouldBeInside)
     // vec3 frt(max.x, max.y, max.z); //frt=7
 
     float sommets[] = {
-    min.x, min.y, max.z, //flb=0
-    max.x, min.y, max.z, //frb=1
-    max.x, max.y, max.z, //frt=2
-    min.x, max.y, max.z, //flt=3
-    min.x, min.y, min.z, //blb=4
-    max.x, min.y, min.z, //brb=5
-    max.x, max.y, min.z, //brt=6
-    min.x, max.y, min.z};//blt=7
+        min.x, min.y, max.z,  //flb=0
+        max.x, min.y, max.z,  //frb=1
+        max.x, max.y, max.z,  //frt=2
+        min.x, max.y, max.z,  //flt=3
+        min.x, min.y, min.z,  //blb=4
+        max.x, min.y, min.z,  //brb=5
+        max.x, max.y, min.z,  //brt=6
+        min.x, max.y, min.z}; //blt=7
     // //tableau entrelacant coordonnees-normales
-    unsigned int index[] ={
-        
+    unsigned int index[] = {
+
         /*front*/
-        0,1,2,
-        2,3,0,
+        0, 1, 2,
+        2, 3, 0,
         /*right*/
-        1,5,6,
-        6,2,1,
+        1, 5, 6,
+        6, 2, 1,
         /*back*/
-        7,6,5,
-        5,4,7,
+        7, 6, 5,
+        5, 4, 7,
         /*left*/
-        4,0,3,
-        3,7,4,
+        4, 0, 3,
+        3, 7, 4,
         /*bottom*/
-        4,5,1,
-        1,0,4,
+        4, 5, 1,
+        1, 0, 4,
         /*top*/
-        3,2,6,
-        6,7,3
-    };
+        3, 2, 6,
+        6, 7, 3};
     nbTriangles = 12;
 
     //attribution d'un buffer de donnees (1 indique la création d'un buffer)
-    glGenBuffers(1,&vbo);                                             PRINT_OPENGL_ERROR();
+    glGenBuffers(1, &vbo);
+    PRINT_OPENGL_ERROR();
     //affectation du buffer courant
-    glBindBuffer(GL_ARRAY_BUFFER,vbo);                                PRINT_OPENGL_ERROR();
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    PRINT_OPENGL_ERROR();
     //copie des donnees des sommets sur la carte graphique
-    glBufferData(GL_ARRAY_BUFFER,sizeof(sommets),sommets,GL_STATIC_DRAW);  PRINT_OPENGL_ERROR();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sommets), sommets, GL_STATIC_DRAW);
+    PRINT_OPENGL_ERROR();
 
-    glEnableClientState(GL_VERTEX_ARRAY); PRINT_OPENGL_ERROR();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    PRINT_OPENGL_ERROR();
     // Indique que le buffer courant (désigné par la variable vbo) est utilisé pour les positions de sommets
-    glVertexPointer(3, GL_FLOAT, sizeof(sommets), 0); PRINT_OPENGL_ERROR();
+    glVertexPointer(3, GL_FLOAT, sizeof(sommets), 0);
+    PRINT_OPENGL_ERROR();
 
     //attribution d'un autre buffer de donnees
-    glGenBuffers(1,&vboi);                                            PRINT_OPENGL_ERROR();
+    glGenBuffers(1, &vboi);
+    PRINT_OPENGL_ERROR();
     //affectation du buffer courant (buffer d'indice)
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,vboi);                       PRINT_OPENGL_ERROR();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi);
+    PRINT_OPENGL_ERROR();
     //copie des indices sur la carte graphique
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(index),index,GL_STATIC_DRAW);  PRINT_OPENGL_ERROR();
-    
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
+    PRINT_OPENGL_ERROR();
 }

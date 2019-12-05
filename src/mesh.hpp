@@ -20,20 +20,20 @@ struct mesh
 };
 
 /** chargement d'un fichier off */
-mesh load_off_file(const std::string& filename);
+mesh load_off_file(const std::string &filename);
 /** chargement d'un fichier obj (gere potentiellement la texture) */
-mesh load_obj_file(const std::string& filename);
+mesh load_obj_file(const std::string &filename);
 
 /** calcule les normales du maillage passe en parametre */
-void update_normals(mesh* m);
+void update_normals(mesh *m);
 /** donne une couleur uniforme au maillage passe en parametre */
-void fill_color(mesh* m,const vec3& color);
+void fill_color(mesh *m, const vec3 &color);
 /** chaque sommet du maillage recoit une couleur correspondante a sa normale */
-void fill_color_normal(mesh* m);
+void fill_color_normal(mesh *m);
 
 /** applique la matrice passee en parametre a l'ensemble des sommets du maillage */
-void apply_deformation(mesh* m,const mat4 T);
+void apply_deformation(mesh *m, const mat4 T);
 /** inverse le sens de toutes les normales du maillage */
-void invert_normals(mesh* m);
+void invert_normals(mesh *m);
 
 #endif

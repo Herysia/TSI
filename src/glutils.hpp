@@ -8,7 +8,6 @@
  *
 \*****************************************************************************/
 
-
 #ifndef GL_UTILS_H
 #define GL_UTILS_H
 
@@ -19,12 +18,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-
 //Macro permettant la recherche et l'affichage des erreurs OpenGL, indique le fichier et la ligne au moment de l'appel.
 #define PRINT_OPENGL_ERROR() print_opengl_error(__FILE__, __LINE__)
-
-
-
 
 //Affichage des erreurs OpenGL
 bool print_opengl_error(const char *file, int line);
@@ -44,6 +39,6 @@ GLuint read_shader(const std::string &vertex_filename,
 
 //Decallage d'offset sur pour les buffers des VBO (un simple cast vers un pointeur)
 // Le parametre doit contenir l'offset en octets
-GLubyte* buffer_offset(int offset);
+GLubyte *buffer_offset(int offset);
 
 #endif

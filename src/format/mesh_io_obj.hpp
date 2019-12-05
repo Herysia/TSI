@@ -30,22 +30,19 @@ class mesh;
 namespace cpe
 {
 
-
-
 /** Load a mesh structure from a OFF file */
-mesh load_mesh_file_obj(std::string const& filename);
-
+mesh load_mesh_file_obj(std::string const &filename);
 
 /** An obj structure following the definition of an obj file */
 struct obj_structure
 {
-    std::vector<vec3> data_vertex;    //the coordinates of vertices
-    std::vector<vec2> data_texture;   //the coordinates of textures (optional)
-    std::vector<vec3> data_normal;    //the coordinates of normals (optional)
+    std::vector<vec3> data_vertex;  //the coordinates of vertices
+    std::vector<vec2> data_texture; //the coordinates of textures (optional)
+    std::vector<vec3> data_normal;  //the coordinates of normals (optional)
 
-    std::vector<std::vector<int> > data_face_vertex;  //the indices of the polygon of vertices
-    std::vector<std::vector<int> > data_face_texture; //the indices of the polygon of texture (optional)
-    std::vector<std::vector<int> > data_face_normal;  //the indices of the polygon of normal (optional)
+    std::vector<std::vector<int>> data_face_vertex;  //the indices of the polygon of vertices
+    std::vector<std::vector<int>> data_face_texture; //the indices of the polygon of texture (optional)
+    std::vector<std::vector<int>> data_face_normal;  //the indices of the polygon of normal (optional)
 };
 
 /** Split a given string of face f from obj style into a set of values.
@@ -56,16 +53,14 @@ struct obj_structure
  *      4 7 8 4 -> 4 7 8 4
  *
 */
-std::vector<int> split_face_data(std::string const& face_data_str);
+std::vector<int> split_face_data(std::string const &face_data_str);
 
 /** Read an obj file and return an obj structure. */
-obj_structure load_file_obj_structure(std::string const& filename);
+obj_structure load_file_obj_structure(std::string const &filename);
 
+void read_vertex_obj(std::stringstream &tokens, obj_structure &obj);
+void read_texture_obj(std::stringstream &tokens, obj_structure &obj);
 
-void read_vertex_obj(std::stringstream& tokens,obj_structure& obj);
-void read_texture_obj(std::stringstream& tokens,obj_structure& obj);
-
-
-}
+} // namespace cpe
 
 #endif

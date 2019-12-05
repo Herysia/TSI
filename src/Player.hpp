@@ -5,7 +5,7 @@
 #include "vec3.hpp"
 #include <vector>
 
-class Player: public Entity
+class Player : public Entity
 {
 public:
     Player();
@@ -16,14 +16,15 @@ public:
     void move(float x, float y, float z);
     void move(vec3 dist);
     vec3 getCamPosition();
-    
+
     void rotateAngle(float x, float y, float z);
     void rotateAngle(vec3 dist);
     vec3 getViewAngle();
     void clampViewAngle();
-    void correctPosition(const Entity& other);
+    void correctPosition(const Entity &other);
     void setHorizontalSpeed(vec3 horizontalSpeed);
     void handleJump(bool jumpKey);
+
 private:
     vec3 viewAngle;
     vec3 camPosition;
@@ -32,10 +33,10 @@ private:
     vec3 speed;
     bool isOnGround;
 
-    void applyVerticalCollision(const Plane& other);
-    void applyVerticalCollision(const AABB& other);
-    void applyHorizontalCollision(const AABB& other);
-    
+    void applyVerticalCollision(const Plane &other);
+    void applyVerticalCollision(const AABB &other);
+    void applyHorizontalCollision(const AABB &other);
+
 protected:
 };
 

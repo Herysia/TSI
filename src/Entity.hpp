@@ -22,7 +22,7 @@ public:
     vec3 rotationCenter;
     vec3 translation;
 
-    virtual void Draw(const vec3& camPosition);
+    virtual void Draw(const vec3 &camPosition);
     GLuint textureId;
     vec3 color;
 
@@ -48,6 +48,7 @@ private:
     {
         return shaderProgramId == shaderProgramIdTextured;
     }
+
 protected:
     mesh m;
     int nbTriangles;
@@ -59,7 +60,6 @@ protected:
     AABB aabb;
     CollisionMode mode;
     GLuint shaderProgramId;
-    
 };
 
 #endif //ENTITY_H

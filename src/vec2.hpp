@@ -6,12 +6,11 @@
 
 #include <iostream>
 
-
 /** Une structure de vecteur 2D */
 
 class vec2
 {
-    public:
+public:
     /** Coordonnee x */
     float x;
     /** Coordonnee y */
@@ -20,41 +19,39 @@ class vec2
     /** Constructeur vecteur (0,0) */
     vec2();
     /** Constructeur vecteur (x,y) */
-    vec2(float x_param,float y_param);
-    
+    vec2(float x_param, float y_param);
 
     /** Somme vectorielle */
-    vec2& operator+=(const vec2& v);
+    vec2 &operator+=(const vec2 &v);
     /** Difference vectorielle */
-    vec2& operator-=(const vec2& v);
+    vec2 &operator-=(const vec2 &v);
     /** Multiplication par un scalaire */
-    vec2& operator*=(float s);
+    vec2 &operator*=(float s);
     /** Division par un scalaire */
-    vec2& operator/=(float s);
+    vec2 &operator/=(float s);
 
     /** Norme d'un vecteur */
     float norm() const;
     /** Produit scalaire */
-    float dot(const vec2& v1);
+    float dot(const vec2 &v1);
 
-    float cross(const vec2& v1);
+    float cross(const vec2 &v1);
 
     /** Renvoie un vecteur de meme direction de norme 1 */
     vec2 normalize() const;
     /** Affichage d'un vecteur sur la ligne de commande */
-    friend std::ostream& operator<<(std::ostream& sout, const vec2& vec);
-
+    friend std::ostream &operator<<(std::ostream &sout, const vec2 &vec);
 };
 
 /** Somme vectorielle */
-vec2 operator+(const vec2& v0,const vec2& v1);
+vec2 operator+(const vec2 &v0, const vec2 &v1);
 /** Difference vectorielle */
-vec2 operator-(const vec2& v0,const vec2& v1);
+vec2 operator-(const vec2 &v0, const vec2 &v1);
 /** Multiplication par un scalaire */
-vec2 operator*(const vec2& v0,float s);
+vec2 operator*(const vec2 &v0, float s);
 /** Multiplication par un scalaire */
-vec2 operator*(float s,const vec2& v0);
+vec2 operator*(float s, const vec2 &v0);
 /** Division par un scalaire */
-vec2 operator/(const vec2& v0,float s);
+vec2 operator/(const vec2 &v0, float s);
 
 #endif

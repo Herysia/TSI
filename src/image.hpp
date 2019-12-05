@@ -15,9 +15,9 @@ enum ImageType
 
 struct Image
 {
-  int            width;
-  int            height;
-  ImageType      type;
+  int width;
+  int height;
+  ImageType type;
   unsigned char *data;
   ~Image() { delete[] data; }
 };

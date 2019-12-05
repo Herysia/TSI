@@ -20,20 +20,19 @@
 #include "rectangularBlock.hpp"
 
 class MainWindow
-{    
+{
 public:
-    
     MainWindow();
     void Run();
-    void Init(int argc, char** argv);
-private:
+    void Init(int argc, char **argv);
 
-    static MainWindow* currentWindow;
+private:
+    static MainWindow *currentWindow;
     GLuint vbo;
 
     mat4 projection;
-    Player* localPlayer;
-    std::vector<Entity*> props;
+    Player *localPlayer;
+    std::vector<Entity *> props;
 
     keyboardKeyState keyState;
 
@@ -59,7 +58,7 @@ private:
     {
         currentWindow->specialCallback(key, x, y, true);
     }
-    void keyboardCallback(unsigned char key, int, int, bool down);//down=1 -> key pressed down   /  down=0 -> key released
+    void keyboardCallback(unsigned char key, int, int, bool down); //down=1 -> key pressed down   /  down=0 -> key released
     void specialCallback(int key, int, int, bool down);
     static void mouseCallback(int x, int y);
 

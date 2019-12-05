@@ -6,7 +6,7 @@ class AABB
 public:
     vec3 min;
     vec3 max;
-    
+
     AABB() : AABB(vec3(), vec3()){};
     AABB(vec3 min, vec3 max);
     bool isColliding(AABB other);

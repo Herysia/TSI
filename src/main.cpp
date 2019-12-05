@@ -5,14 +5,13 @@
  * Programme principal des appels OpenGL
 \*****************************************************************************/
 
-
 #include "MainWindow.hpp"
 #include "glutils.hpp"
 #include "global.hpp"
 
 GLuint shaderProgramIdColored;
 GLuint shaderProgramIdTextured;
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     MainWindow main = MainWindow();
     main.Init(argc, argv);
@@ -20,4 +19,3 @@ int main(int argc, char** argv)
     //Plus rien n'est execute apres cela
     return 0;
 }
-

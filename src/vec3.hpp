@@ -12,8 +12,7 @@
 
 class vec3
 {
-    public:
-
+public:
     /** Coordonnee x */
     float x;
     /** Coordonnee y */
@@ -24,23 +23,23 @@ class vec3
     /** Constructeur vecteur (0,0,0) */
     vec3();
     /** Constructeur vecteur (x,y,z) */
-    vec3(float x_param,float y_param,float z_param);
+    vec3(float x_param, float y_param, float z_param);
 
     /** Somme vectorielle */
-    vec3& operator+=(const vec3& v);
+    vec3 &operator+=(const vec3 &v);
     /** Difference vectorielle */
-    vec3& operator-=(const vec3& v);
+    vec3 &operator-=(const vec3 &v);
     /** Multiplication par un scalaire */
-    vec3& operator*=(float s);
+    vec3 &operator*=(float s);
     /** Division par un scalaire */
-    vec3& operator/=(float s);
-    
+    vec3 &operator/=(float s);
+
     /** Norme d'un vecteur */
     float norm() const;
     /** Produit scalaire */
-    float dot(const vec3& v1) const;
+    float dot(const vec3 &v1) const;
     /** Produit vectoriel */
-    vec3 cross(const vec3& v1) const;
+    vec3 cross(const vec3 &v1) const;
 
     /** Projection sur le plan horizontal*/
     inline vec2 get2D() const
@@ -54,20 +53,15 @@ class vec3
     vec3 clamp() const;
 
     /** Affichage d'un vecteur sur la ligne de commande */
-    friend std::ostream& operator<<(std::ostream& sout, const vec3& vec);
-
-
-
-    
+    friend std::ostream &operator<<(std::ostream &sout, const vec3 &vec);
 };
 /** Somme vectorielle */
-vec3 operator+(const vec3& v0,const vec3& v1);
+vec3 operator+(const vec3 &v0, const vec3 &v1);
 /** Difference vectorielle */
-vec3 operator-(const vec3& v0,const vec3& v1);
+vec3 operator-(const vec3 &v0, const vec3 &v1);
 /** Multiplication par un scalaire */
-vec3 operator*(const vec3& v0,float s);
+vec3 operator*(const vec3 &v0, float s);
 /** Division par un scalaire */
-vec3 operator/(const vec3& v0,float s);
-
+vec3 operator/(const vec3 &v0, float s);
 
 #endif

@@ -29,8 +29,8 @@ namespace cpe
 {
 
 /** Load a mesh structure from a OFF file */
-mesh load_mesh_file_off(std::string const& filename);
+mesh load_mesh_file_off(std::string const &filename);
 
-}
+} // namespace cpe
 
 #endif
