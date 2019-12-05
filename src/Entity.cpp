@@ -8,6 +8,7 @@ Entity::Entity()
 
 void Entity::Draw(const vec3& camPosition)
 {
+    return;
     glUseProgram(shaderProgramId);
         //envoie des parametres uniformes
     {
@@ -52,5 +53,6 @@ void Entity::Draw(const vec3& camPosition)
         //glDrawElements(GL_LINE_LOOP, 3*nbTriangles, GL_UNSIGNED_INT, 0);     PRINT_OPENGL_ERROR();
         //glDrawElements(GL_TRIANGLES, 3*nbTriangles, GL_UNSIGNED_INT, 0);     PRINT_OPENGL_ERROR();
     }
+    
 }
 

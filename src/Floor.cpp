@@ -5,7 +5,7 @@ Floor::Floor()
 {
     shaderProgramId = shaderProgramIdTextured;
     glUseProgram(shaderProgramId);
-        //Creation manuelle du model 2
+    //Creation manuelle du model 2
     mode = MODE_PLANE;
     //coordonnees geometriques des sommets
     vec3 p0=vec3(-25.0f,-0.9f,-25.0f);
