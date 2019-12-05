@@ -33,6 +33,7 @@ private:
     bool isOnGround;
 
     void applyVerticalCollision(const Plane& other);
+    void applyVerticalCollision(const AABB& other);
     void applyHorizontalCollision(const AABB& other);
     
 protected:
