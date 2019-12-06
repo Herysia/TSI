@@ -22,6 +22,9 @@ void MainWindow::Init(int argc, char **argv)
 
     //Taille de la fenetre a l'ouverture
     glutInitWindowSize(1366, 768);
+    glutReshapeFunc(resizeHandler);
+
+
 
     //Titre de la fenetre
     glutCreateWindow("OpenGL");
@@ -110,18 +113,39 @@ void MainWindow::keyboardCallback(unsigned char key, int, int, bool down)
         break;
     case 'z':
         currentWindow->keyState.forward = down;
+        currentWindow->localPlayer->noClipMode = false;
         break;
     case 's':
         currentWindow->keyState.backward = down;
+        currentWindow->localPlayer->noClipMode = false;
         break;
     case 'q':
         currentWindow->keyState.left = down;
+        currentWindow->localPlayer->noClipMode = false;
         break;
     case 'd':
         currentWindow->keyState.right = down;
+        currentWindow->localPlayer->noClipMode = false;
+        break;
+    case 'Z':
+        currentWindow->keyState.forward = down;
+        currentWindow->localPlayer->noClipMode = true;
+        break;
+    case 'S':
+        currentWindow->keyState.backward = down;
+        currentWindow->localPlayer->noClipMode = true;
+        break;
+    case 'Q':
+        currentWindow->keyState.left = down;
+        currentWindow->localPlayer->noClipMode = true;
+        break;
+    case 'D':
+        currentWindow->keyState.right = down;
+        currentWindow->localPlayer->noClipMode = true;
         break;
     case ' ':
         currentWindow->keyState.jump = down;
+        currentWindow->localPlayer->noClipMode = false;
     }
 }
 
@@ -146,9 +170,12 @@ void MainWindow::specialCallback(int key, int, int, bool down)
 }
 void MainWindow::handleInput()
 {
-    vec3 dir((currentWindow->keyState.forward - currentWindow->keyState.backward) * sin(currentWindow->localPlayer->getViewAngle().y) + (currentWindow->keyState.right - currentWindow->keyState.left) * cos(currentWindow->localPlayer->getViewAngle().y), 0.0f, (currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->getViewAngle().y) - (currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->getViewAngle().y));
-
+    vec2 dir((currentWindow->keyState.forward - currentWindow->keyState.backward) * sin(currentWindow->localPlayer->getViewAngle().y) + (currentWindow->keyState.right - currentWindow->keyState.left) * cos(currentWindow->localPlayer->getViewAngle().y)
+    , (currentWindow->keyState.right - currentWindow->keyState.left) * sin(currentWindow->localPlayer->getViewAngle().y) - (currentWindow->keyState.forward - currentWindow->keyState.backward) * cos(currentWindow->localPlayer->getViewAngle().y));
     currentWindow->localPlayer->setHorizontalSpeed(dir.normalize() * 0.02f);
+    if(currentWindow->localPlayer->noClipMode)
+        currentWindow->localPlayer->setVerticalSpeed(-(currentWindow->keyState.forward - currentWindow->keyState.backward) * sin(currentWindow->localPlayer->getViewAngle().x));
+    
     currentWindow->localPlayer->handleJump(currentWindow->keyState.jump);
     currentWindow->localPlayer->rotateAngle((currentWindow->keyState.view.up - currentWindow->keyState.view.down) * 0.02f,
                                             (currentWindow->keyState.view.right - currentWindow->keyState.view.left) * 0.02f,
@@ -182,7 +209,8 @@ void MainWindow::timerCallback(int)
     currentWindow->localPlayer->applyPhysics();
     for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
     {
-
+        if(currentWindow->localPlayer->noClipMode)
+            break;
         currentWindow->localPlayer->correctPosition(**it.base());
         /*
         if(currentWindow->localPlayer->checkCollision(*it.base()))
@@ -191,9 +219,8 @@ void MainWindow::timerCallback(int)
             std::cout << "1" << std::endl;
         }*/
     }
-
-    //reactualisation de l'affichage (toutes les 25ms)
-    if (i >= 5)
+    //reactualisation de l'affichage (toutes les 15ms <=> 66.6fps)
+    if (i >= 3)
     {
         glutPostRedisplay();
         i = 0;
@@ -231,9 +258,47 @@ void MainWindow::loadData()
     //props.push_back(Table(0.01f, 0.01f, 0.01f));
     //props.push_back(Table(0.02f, 0.02f, 0.02f));
     //props.push_back(RectangularBlock(props.back().getAABB().min, props.back().getAABB().max));
-    //props.push_back(new Floor());
-    props.push_back(new RectangularBlock(vec3(3, -1, 3), vec3(6, 0, 6)));
-    props.push_back(new RectangularBlock(vec3(-10.0f, -1.0f, -10.0f), vec3(10.0f, 30.0f, 10.0f), true));
+    //props.push_back(new Floor());//vec3(0.42f, 1.0f, 0.42f)
+    //props.push_back(new RectangularBlock(vec3(3, -1, 3), vec3(6, 0, 6)));
+    //Box
+    props.push_back(new RectangularBlock(vec3(-10.0f, 0.0f, -10.0f), vec3(10.0f, 6.5f, 10.0f), true));
+
+    //big stairs
+    props.push_back(new RectangularBlock(vec3(2.5, 0.0f, -8.5), vec3(5.5f, 0.7f, -5.5)));//overlapping
+    props.push_back(new RectangularBlock(vec3(5.5f, 0.0f, -8.5), vec3(8.5, 0.7f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(5.5, 0.7f, -5.5), vec3(8.5, 1.4f, -1.83)));
+    props.push_back(new RectangularBlock(vec3(5.5, 1.4f, -1.83), vec3(8.5, 2.2f, 1.83)));
+    props.push_back(new RectangularBlock(vec3(5.5, 2.1f, 1.83), vec3(8.5, 3.0f, 5.5)));
+    props.push_back(new RectangularBlock(vec3(5.5, 3.0f, 5.5), vec3(8.5, 3.8f, 8.5)));
+
+    //small jumps
+    props.push_back(new RectangularBlock(vec3(3.5, 3.4f, 5.5), vec3(4.5, 3.8f, 8.5)));
+    props.push_back(new RectangularBlock(vec3(1.5, 3.4f, 5.5), vec3(2.5, 3.8f, 8.5)));
+    props.push_back(new RectangularBlock(vec3(-0.5, 3.4f, 5.5), vec3(0.5, 3.8f, 8.5)));
+    props.push_back(new RectangularBlock(vec3(-2.5, 3.4f, 5.5), vec3(-1.5, 3.8f, 8.5)));
+    props.push_back(new RectangularBlock(vec3(-4.5, 3.4f, 5.5), vec3(-3.5, 3.8f, 8.5)));
+    
+    //tiny path
+    props.push_back(new RectangularBlock(vec3(-8.5, 3.4f, 5.5), vec3(-5.5, 3.8f, 8.5)));
+    props.push_back(new RectangularBlock(vec3(-7.2, 3.4f, -5.5), vec3(-6.8, 3.8f, 5.5)));
+    props.push_back(new RectangularBlock(vec3(-8.5, 3.4f, -8.5), vec3(-5.5, 3.8f, -5.5)));
+    
+    //autostairs
+    props.push_back(new RectangularBlock(vec3(-5.5, 3.4f, -8.5), vec3(-4.5, 3.8f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(-4.5, 3.8f, -8.5), vec3(-3.5, 3.9f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(-3.5, 3.9f, -8.5), vec3(-2.5, 4.0f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(-2.5, 4.0f, -8.5), vec3(-1.5, 4.1f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(-1.5, 4.1f, -8.5), vec3(-0.5, 4.2f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(-0.5, 4.2f, -8.5), vec3(0.5, 4.3f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(0.5, 4.3f, -8.5), vec3(1.5, 4.4f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(1.5, 4.4f, -8.5), vec3(2.5, 4.5f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(2.5, 4.5f, -8.5), vec3(3.5, 4.6f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(3.5, 4.6f, -8.5), vec3(4.5, 4.7f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(4.5, 4.7f, -8.5), vec3(5.5, 4.8f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(10, 4.9f, -5.5)));
+    //plane for the slope
+    props.push_back(new Floor(vec3(-5.6, 3.8f, -8.5), vec3(5.5, 4.92f, -8.5), vec3(5.5, 4.92f, -5.5), vec3(-5.6, 3.8f, -5.5)));
+
 }
 
 void MainWindow::Run()

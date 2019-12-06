@@ -22,8 +22,11 @@ public:
     vec3 getViewAngle();
     void clampViewAngle();
     void correctPosition(const Entity &other);
-    void setHorizontalSpeed(vec3 horizontalSpeed);
+    void setHorizontalSpeed(vec2 horizontalSpeed);
+    void setVerticalSpeed(float verticalSpeed);
     void handleJump(bool jumpKey);
+    
+    bool noClipMode = false;
 
 private:
     vec3 viewAngle;

@@ -3,9 +3,9 @@
 Player::Player()
 {
     rotationCenter = vec3();
-    camPosition = vec3(0.0f, 0.0f, 0.0f);
+    camPosition = vec3(0.0f, 1.0f, 0.0f);
     speed = vec3();
-    size = vec3(0.3f, 1.0f, 0.3f);
+    size = vec3(0.1f, 1.0f, 0.1f);
     mode = MODE_AABB;
     //Les yeux sont à 90% de la taille du joueur
     aabb = AABB(vec3(-size.x * 0.5f, -0.9f * size.y, -size.z * 0.5f) + camPosition, vec3(size.x * 0.5f, 0.1f * size.y, size.z * 0.5f) + camPosition);
@@ -23,15 +23,20 @@ void Player::Draw()
 void Player::applyPhysics()
 {
     //apply gravity
-    speed.y -= 0.001;
+    if(!noClipMode)
+        speed.y -= 0.001;
     //apply speed
 
     move(speed);
 }
-void Player::setHorizontalSpeed(vec3 horizontalSpeed)
+void Player::setVerticalSpeed(float verticalSpeed)
+{
+    speed.y = verticalSpeed*0.02;
+}
+void Player::setHorizontalSpeed(vec2 horizontalSpeed)
 {
     speed.x = horizontalSpeed.x;
-    speed.z = horizontalSpeed.z;
+    speed.z = horizontalSpeed.y;
 }
 void Player::move(float x, float y, float z)
 {
@@ -77,11 +82,9 @@ void Player::clampViewAngle()
 bool Player::applyVerticalCollision(const Plane &other)
 {
     //Vertical collision
-    float verticalProj = (Abs(other.normal.y) <= 0.0001f ? 0.0f : other.normal.dot(vec3((aabb.max.x + aabb.min.x) * 0.5f, 0.0f, -(aabb.max.z + aabb.min.z) * 0.5f)) + other.dist) / other.normal.y;
-    std::cout << verticalProj << std::endl;
+    float verticalProj = (Abs(other.normal.y) <= 0.0001f ? 0.0f : other.normal.dot(vec3(-(aabb.max.x + aabb.min.x) * 0.5f, 0.0f, (aabb.max.z + aabb.min.z) * 0.5f)) + other.dist) / other.normal.y;
     if (verticalProj <= aabb.min.y || verticalProj >= aabb.max.y) //not vertially colliding gravity center
         return false;
-
     //TODO TOFIX angled surface will trigger this check, but it shouldn't
     // if ((verticalProj > aabb.min.y && verticalProj > aabb.min.y - speed.y)) //too far inside, should not collide
     // //  ||  (verticalProj<aabb.max.y && verticalProj >= aabb.min.y-2*speed.y))
@@ -92,12 +95,13 @@ bool Player::applyVerticalCollision(const Plane &other)
 
     if (!other.check2Dcoord(aabb))
         return false;
-    if (verticalProj - aabb.min.y < aabb.max.y - verticalProj)
+    if (speed.y<=0) {
         move(0.0f, verticalProj - aabb.min.y, 0.0f);
+        isOnGround = true;
+    }
     else
-        move(0.0f, aabb.max.y - verticalProj, 0.0f);
+        move(0.0f, verticalProj - aabb.max.y , 0.0f);
     speed.y = 0.0f;
-    isOnGround = true;
     return true;
 }
 bool Player::applyVerticalCollision(const AABB &other)
@@ -127,7 +131,7 @@ bool Player::applyVerticalCollision(const AABB &other)
 bool Player::applyHorizontalCollision(const AABB &other)
 {
     if ((!other.shouldBeInside && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x) //overlapping on x axis;
-         && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)                       //overlapping on y axis;
+         && (aabb.min.y+0.003f <= other.max.y && aabb.max.y >= other.min.y)                //overlapping on y axis; +0.003f: hotfix for overlapped objects
          && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))                      //overlapping on z axis;
         || (other.shouldBeInside 
         && (aabb.max.x >= other.max.x || aabb.min.x <= other.min.x 
@@ -177,7 +181,7 @@ void Player::correctPosition(const Entity &other)
     }
     else //We use  AABB-AABB collision for walls and objects (simple)
     {
-        if(!applyVerticalCollision(other.getAABB()) || other.getAABB().shouldBeInside)
+        if(!applyVerticalCollision(other.getAABB()) || other.getAABB().shouldBeInside) // we cant collide both vertically and horizontally unless we should be outside
             applyHorizontalCollision(other.getAABB());
     }
 }

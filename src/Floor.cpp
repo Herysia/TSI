@@ -1,18 +1,17 @@
 #include "Floor.hpp"
 #include "global.hpp"
 
-Floor::Floor()
+Floor::Floor(vec3 p0, vec3 p1, vec3 p2, vec3 p3, bool isVisible, vec3 color)
 {
     shaderProgramId = shaderProgramIdColored;
-    glUseProgram(shaderProgramId);
-    color = vec3(0.42f, 1.0f, 0.42f);
-    //Creation manuelle du model 2
+    this->isVisible = isVisible;
     mode = MODE_PLANE;
-    //coordonnees geometriques des sommets
-    vec3 p0 = vec3(-25.0f, -0.9f, -25.0f);
-    vec3 p1 = vec3(25.0f, -0.9f, -25.0f);
-    vec3 p2 = vec3(25.0f, -0.9f, 25.0f);
-    vec3 p3 = vec3(-25.0f, -0.9f, 25.0f);
+    plane = Plane(p0, p1, p2, p3, true);
+    if(!isVisible)
+        return;
+    this->color = color;
+    glUseProgram(shaderProgramId);
+    //Creation manuelle du model 2
 
     //normales pour chaque sommet
     vec3 n0 = vec3(0.0f, 1.0f, 0.0f);
@@ -20,7 +19,6 @@ Floor::Floor()
     vec3 n2 = n0;
     vec3 n3 = n0;
 
-    plane = Plane(p0, p1, p2, p3, true);
     //couleur pour chaque sommet
     vec3 c0 = vec3(1.0f, 1.0f, 1.0f);
     vec3 c1 = c0;

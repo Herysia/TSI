@@ -36,11 +36,17 @@ private:
 
     keyboardKeyState keyState;
 
+
     static void displayCallback();
     static void timerCallback(int);
     void loadData();
     void handleInput();
 
+    inline static void resizeHandler(int width, int height) {
+        //prevent resize for now
+        //TODO: handle resize
+        glutReshapeWindow(1366, 768);
+    }
     //Inputs
     inline static void keyboardCallbackUp(unsigned char key, int x, int y)
     {
