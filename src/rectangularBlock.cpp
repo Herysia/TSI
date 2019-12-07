@@ -1,4 +1,4 @@
-#include "rectangularBlock.hpp"
+#include "RectangularBlock.hpp"
 
 RectangularBlock::RectangularBlock(vec3 min, vec3 max, bool shouldBeInside)
 {
@@ -90,3 +90,10 @@ RectangularBlock::RectangularBlock(vec3 min, vec3 max, bool shouldBeInside)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
     PRINT_OPENGL_ERROR();
 }
+void RectangularBlock::moveEntity(vec3 dist)
+{
+    translation+=dist;
+    aabb.min+=dist;
+    aabb.max+=dist;
+}
+

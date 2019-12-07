@@ -209,8 +209,9 @@ void MainWindow::timerCallback(int)
     currentWindow->localPlayer->applyPhysics();
     for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
     {
+        (*it)->updatePosition();
         if(currentWindow->localPlayer->noClipMode)
-            break;
+            continue;
         currentWindow->localPlayer->correctPosition(**it.base());
         /*
         if(currentWindow->localPlayer->checkCollision(*it.base()))
@@ -298,6 +299,11 @@ void MainWindow::loadData()
     props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(10, 4.9f, -5.5)));
     //plane for the slope
     props.push_back(new Floor(vec3(-5.6, 3.8f, -8.5), vec3(5.5, 4.92f, -8.5), vec3(5.5, 4.92f, -5.5), vec3(-5.6, 3.8f, -5.5)));
+
+    Elevator* elevator = new Elevator(vec3(1, 0.0f, 0), vec3(4, 0.1f, 3));
+    elevator->setMinMax(0, 4.9);
+    elevator->setSpeed(0.01f);
+    props.push_back(elevator);
 
 }
 

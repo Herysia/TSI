@@ -37,10 +37,11 @@ public:
         glDrawElements(GL_TRIANGLES, 3 * nbTriangles, GL_UNSIGNED_INT, 0);
         PRINT_OPENGL_ERROR();
     }
-
 private:
 protected:
     vec3 min, max;
+    vec3 speed;
+    virtual void moveEntity(vec3 dist) override;
 };
 
 #endif //RECTANGULAR_BLOCK_H

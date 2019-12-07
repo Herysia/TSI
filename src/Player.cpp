@@ -22,6 +22,8 @@ void Player::Draw()
 
 void Player::applyPhysics()
 {
+    if(speed.y <= 0.001f)//falling from height
+        isOnGround = false;
     //apply gravity
     if(!noClipMode)
         speed.y -= 0.001;
@@ -146,25 +148,24 @@ bool Player::applyHorizontalCollision(const AABB &other)
         float b = coord2D.y - other.min.z;
         float min = std::min(r, std::min(l, std::min(f, b)));
         vec3 sizeDelta = size * 0.5f * (other.shouldBeInside ? -1.0f : 1.0f);
-        if (Abs(r - min) < 0.001f)
+        if (Abs(r - min) < 0.001f && speed.x < 0.0f)
         {
             move(r + sizeDelta.x, 0.0f, 0.0f);
         }
-        else if (Abs(l - min) < 0.001f)
+        else if (Abs(l - min) < 0.001f && speed.x > 0.0f)
         {
             move(-(l + sizeDelta.x), 0.0f, 0.0f);
         }
-        else if (Abs(f - min) < 0.001f)
+        else if (Abs(f - min) < 0.001f && speed.z < 0.0f)
         {
             move(0.0f, 0.0f, f + sizeDelta.z);
         }
-        else if (Abs(b - min) < 0.001f)
+        else if (Abs(b - min) < 0.001f && speed.z > 0.0f)
         {
             move(0.0f, 0.0f, -(b + sizeDelta.z));
         }
         else
         {
-            std::cout << "Warning: collision error due to precision" << std::endl;
             return false;
         }
         return true;

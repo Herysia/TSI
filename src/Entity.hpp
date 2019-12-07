@@ -38,7 +38,11 @@ public:
     {
         return aabb;
     }
-
+  
+    virtual void updatePosition()
+    {
+        ;
+    }
 private:
     inline bool isColored()
     {
@@ -48,6 +52,7 @@ private:
     {
         return shaderProgramId == shaderProgramIdTextured;
     }
+
 
 protected:
     mesh m;
@@ -59,7 +64,11 @@ protected:
     Plane plane;
     AABB aabb;
     CollisionMode mode;
-    GLuint shaderProgramId;
+    GLuint shaderProgramId;  
+    virtual void moveEntity(vec3 dist)
+    {
+        ;
+    }
 };
 
 #endif //ENTITY_H
