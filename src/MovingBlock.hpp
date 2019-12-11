@@ -5,7 +5,7 @@
 
 class MovingBlock : public RectangularBlock
 {
-    public:
+public:
     MovingBlock(vec3 min, vec3 max) : RectangularBlock(min, max) {}
 
     virtual void updatePosition() override;
@@ -35,10 +35,11 @@ class MovingBlock : public RectangularBlock
     {
         return speed;
     }
-    private:
-        vec3 max;
-        vec3 min;
-        vec3 speed;
-    protected:
+private:
+    vec3 max;
+    vec3 min;
+    vec3 speed;
+    virtual void moveEntity(vec3 dist) override;
+protected:
 };
 #endif // MOVINGBLOCK_H

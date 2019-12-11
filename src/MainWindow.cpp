@@ -102,6 +102,10 @@ void MainWindow::displayCallback()
     {
         ent->Draw(currentWindow->localPlayer->getCamPosition());
     }
+    for (auto portal : currentWindow->portals)
+    {
+        portal->Draw(currentWindow->localPlayer->getCamPosition());
+    }
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
 }
@@ -208,6 +212,12 @@ void MainWindow::timerCallback(int)
     currentWindow->localPlayer->updateView();
     currentWindow->handleInput();
     currentWindow->localPlayer->applyPhysics();
+    currentWindow->localPlayer->resetSkippedCollision();
+    for (auto portal : currentWindow->portals)
+    {
+        if(currentWindow->localPlayer->checkPortalCollision(*portal))
+            break;//If teleport has occured
+    }
     //for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
     for (auto ent : currentWindow->props)
     {
@@ -261,7 +271,7 @@ void MainWindow::loadData()
     props.push_back(new RectangularBlock(vec3(-10.0f, 0.0f, -10.0f), vec3(10.0f, 10.0f, 10.0f), true));
 
     //big stairs
-    props.push_back(new RectangularBlock(vec3(2.5, 0.0f, -8.5), vec3(5.5f, 0.7f, -5.5)));//overlapping
+    //props.push_back(new RectangularBlock(vec3(2.5, 0.0f, -8.5), vec3(2.5f, 0.7f, -5.5)));//overlapping
     props.push_back(new RectangularBlock(vec3(5.5f, 0.0f, -8.5), vec3(8.5, 0.7f, -5.5)));
     props.push_back(new RectangularBlock(vec3(5.5, 0.7f, -5.5), vec3(8.5, 1.4f, -1.83)));
     props.push_back(new RectangularBlock(vec3(5.5, 1.4f, -1.83), vec3(8.5, 2.2f, 1.83)));
@@ -306,6 +316,14 @@ void MainWindow::loadData()
     horizontal->setMinMax(vec3(5.5, 4.8f, -5.5), vec3(8.5, 8.9f, 5.5));
     horizontal->setSpeed(vec3(0,0.005,0.01f));
     props.push_back(horizontal);
+
+    Portal* p1 = new Portal(vec2(0,0), vec2(3,3), 9.99f, Portal::XAXIS);
+    Portal* p2 = new Portal(vec2(0,0), vec2(3,3), -9.99f, Portal::XAXIS);
+    p1->linkPortals(p2);
+    portals.push_back(p2);
+    portals.push_back(p1);
+    
+    props.push_back(new RectangularBlock(vec3(3.1, 0, -10), vec3(3.2, 0.2, 10)));
 
 }
 

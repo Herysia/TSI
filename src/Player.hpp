@@ -4,6 +4,7 @@
 #include "Entity.hpp"
 #include "vec3.hpp"
 #include "MovingBlock.hpp"
+#include "Portal.hpp"
 #include <vector>
 
 class Player : public Entity
@@ -27,6 +28,11 @@ public:
     void setVerticalSpeed(float verticalSpeed);
     void handleJump(bool jumpKey);
     
+    bool checkPortalCollision(const Portal &portal);
+    inline void resetSkippedCollision()
+    {
+        skipCollision = false;
+    }
     bool noClipMode = false;
 
 private:
@@ -40,6 +46,13 @@ private:
     bool applyVerticalCollision(const Plane &other);
     bool applyVerticalCollision(const AABB &other);
     bool applyHorizontalCollision(const AABB &other);
+    bool skipCollision = false;
+
+    inline void resetPosition()
+    {
+        camPosition = vec3(0.0f, 1.0f, 0.0f);
+        aabb = AABB(vec3(-size.x * 0.5f, -0.9f * size.y, -size.z * 0.5f) + camPosition, vec3(size.x * 0.5f, 0.1f * size.y, size.z * 0.5f) + camPosition);
+    }
 
 protected:
 };

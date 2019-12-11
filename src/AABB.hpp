@@ -11,6 +11,7 @@ public:
     AABB(vec3 min, vec3 max);
     bool isColliding(AABB other);
     vec2 getCenter2D() const;
+    vec3 getCenter() const;
     bool shouldBeInside = false;
     vec2 getSize() const;
 };

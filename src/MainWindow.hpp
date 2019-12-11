@@ -19,6 +19,7 @@
 #include "Player.hpp"
 #include "RectangularBlock.hpp"
 #include "MovingBlock.hpp"
+#include "Portal.hpp"
 
 class MainWindow
 {
@@ -34,6 +35,7 @@ private:
     mat4 projection;
     Player *localPlayer;
     std::vector<Entity *> props;
+    std::vector<Portal *> portals;
 
     keyboardKeyState keyState;
 

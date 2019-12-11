@@ -30,3 +30,9 @@ void MovingBlock::updatePosition()
     }
     moveEntity(speed);
 }
+void MovingBlock::moveEntity(vec3 dist)
+{
+    translation+=dist;
+    aabb.min+=dist;
+    aabb.max+=dist;
+}

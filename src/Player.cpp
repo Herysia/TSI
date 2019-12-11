@@ -132,6 +132,8 @@ bool Player::applyVerticalCollision(const AABB &other)
 }
 bool Player::applyHorizontalCollision(const AABB &other)
 {
+    if(skipCollision)
+        return false;
     if ((!other.shouldBeInside && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x) //overlapping on x axis;
          && (aabb.min.y+0.003f <= other.max.y && aabb.max.y >= other.min.y)                //overlapping on y axis; +0.003f: hotfix for overlapped objects
          && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))                      //overlapping on z axis;
@@ -158,7 +160,7 @@ bool Player::applyHorizontalCollision(const AABB &other)
         }
         else if (Abs(f - min) < 0.001f)
         {
-            move(0.0f, 0.0f, f + sizeDelta.z);
+            move(0.0f, 0.0f, f + sizeDelta.z );
         }
         else if (Abs(b - min) < 0.001f)
         {
@@ -194,4 +196,32 @@ void Player::correctPosition(const Entity &other)
         if(!isVerticallyColliding || other.getAABB().shouldBeInside) // we cant collide both vertically and horizontally unless we should be outside
             applyHorizontalCollision(other.getAABB());
     }
+}
+
+bool Player::checkPortalCollision(const Portal &portal)
+{
+    AABB other = portal.getAABB();
+    if((aabb.min.x <= other.max.x && aabb.max.x >= other.min.x)
+    && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)
+    && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))
+    {
+        skipCollision = true;
+        if(portal.axis == Portal::ZAXIS)
+        {
+            if(camPosition.x - portal.pos.x > 0  ^ camPosition.x-speed.x - portal.pos.x > 0)//should teleport
+            {
+                move(portal.other->pos - portal.pos);
+                return true;
+            }
+        }
+        else
+        {
+            if(camPosition.z - portal.pos.z > 0  ^ camPosition.z-speed.z - portal.pos.z > 0)//should teleport
+            {
+                move(portal.other->pos - portal.pos);
+                return true;
+            }
+        }
+    }
+    return false;
 }

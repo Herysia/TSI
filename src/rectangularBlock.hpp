@@ -41,7 +41,6 @@ public:
 private:
 protected:
     vec3 min, max;
-    virtual void moveEntity(vec3 dist) override;
 };
 
 #endif //RECTANGULAR_BLOCK_H

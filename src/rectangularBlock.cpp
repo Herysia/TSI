@@ -16,6 +16,7 @@ RectangularBlock::RectangularBlock(vec3 min, vec3 max, bool shouldBeInside)
     */
     this->min = min;
     this->max = max;
+    mode = MODE_AABB;
     aabb = AABB(min, max);
     aabb.shouldBeInside = shouldBeInside;
     color = vec3(1.0f, 1.0f, 1.0f);
@@ -90,10 +91,5 @@ RectangularBlock::RectangularBlock(vec3 min, vec3 max, bool shouldBeInside)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
     PRINT_OPENGL_ERROR();
 }
-void RectangularBlock::moveEntity(vec3 dist)
-{
-    translation+=dist;
-    aabb.min+=dist;
-    aabb.max+=dist;
-}
+
 
