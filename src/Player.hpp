@@ -6,6 +6,7 @@
 #include "MovingBlock.hpp"
 #include "Portal.hpp"
 #include <vector>
+#include <cmath>
 
 class Player : public Entity
 {
@@ -16,15 +17,15 @@ public:
     void applyPhysics();
 
     void move(float x, float y, float z);
-    void move(vec3 dist);
+    void move(const vec3 &dist);
     vec3 getCamPosition();
 
     void rotateAngle(float x, float y, float z);
-    void rotateAngle(vec3 dist);
+    void rotateAngle(const vec3 &dist);
     vec3 getViewAngle();
     void clampViewAngle();
     void correctPosition(const Entity &other);
-    void setHorizontalSpeed(vec2 horizontalSpeed);
+    void setHorizontalSpeed(const vec2 &horizontalSpeed);
     void setVerticalSpeed(float verticalSpeed);
     void handleJump(bool jumpKey);
     
@@ -34,7 +35,6 @@ public:
         skipCollision = false;
     }
     bool noClipMode = false;
-
 private:
     vec3 viewAngle;
     vec3 camPosition;
@@ -54,6 +54,8 @@ private:
         aabb = AABB(vec3(-size.x * 0.5f, -0.9f * size.y, -size.z * 0.5f) + camPosition, vec3(size.x * 0.5f, 0.1f * size.y, size.z * 0.5f) + camPosition);
     }
 
+
+    vec3 AngleVector(const vec3 &viewAngle);
 protected:
 };
 

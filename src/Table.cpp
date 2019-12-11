@@ -67,6 +67,4 @@ Table::Table(float scalex, float scaley, float scalez)
             max.z = m.vertex[idx].position.z;
     }
     aabb = AABB(min, max);
-    std::cout << min << std::endl;
-    std::cout << max << std::endl;
 }

@@ -44,6 +44,8 @@ private:
     static void timerCallback(int);
     void loadData();
     void handleInput();
+    
+    void DrawScene(const vec3 &camPosition, int recursionLevel = 0);
 
     inline static void resizeHandler(int width, int height) {
         //prevent resize for now
@@ -71,6 +73,7 @@ private:
     void specialCallback(int key, int, int, bool down);
     static void mouseCallback(int x, int y);
 
+    int maxRecursionLevel = 2;
 protected:
 };
 

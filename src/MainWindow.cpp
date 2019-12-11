@@ -18,7 +18,7 @@ void MainWindow::Init(int argc, char **argv)
     glutInit(&argc, argv);
 
     //Mode d'affichage (couleur, gestion de profondeur, ...)
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STENCIL);
 
     //Taille de la fenetre a l'ouverture
     glutInitWindowSize(1366, 768);
@@ -59,7 +59,7 @@ void MainWindow::displayCallback()
     //effacement des couleurs du fond d'ecran
     glClearColor(0.5f, 0.6f, 0.9f, 1.0f);
     PRINT_OPENGL_ERROR();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     PRINT_OPENGL_ERROR();
 
     // Affecte les parametres uniformes de la vue (identique pour tous les modeles de la scene)
@@ -97,18 +97,100 @@ void MainWindow::displayCallback()
         PRINT_OPENGL_ERROR();
     }
 
-    //for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
-    for (auto ent : currentWindow->props)
-    {
-        ent->Draw(currentWindow->localPlayer->getCamPosition());
-    }
-    for (auto portal : currentWindow->portals)
-    {
-        portal->Draw(currentWindow->localPlayer->getCamPosition());
-    }
+    currentWindow->DrawScene(currentWindow->localPlayer->getCamPosition());
+
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
 }
+
+//Code adapted from https://github.com/ThomasRinsma/opengl-game-test/blob/86d4dcfccdfe067d6154ff94992e347856578632/src/scene.cc
+void MainWindow::DrawScene(const vec3 &camPosition, int recursionLevel)
+{
+    for(auto portal : currentWindow->portals)
+    {
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glDepthMask(GL_FALSE);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL, recursionLevel, 0xFF);
+        glStencilOp(GL_INCR, GL_KEEP, GL_KEEP);
+        glStencilMask(0xFF);
+        portal->Draw(camPosition);
+
+        if (recursionLevel == maxRecursionLevel)
+        {
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+            glDepthMask(GL_TRUE);
+            
+            glClear(GL_DEPTH_BUFFER_BIT);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_STENCIL_TEST);
+            glStencilMask(0x00);
+            glStencilFunc(GL_EQUAL, recursionLevel + 1, 0xFF);
+            //Clip ProjectionMatrix
+            mat4 projBackup = projection;
+            projection = portal->clippedProjMat(currentWindow->localPlayer->rotation, projection);
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
+            for(auto &prop : currentWindow->props)
+            {
+                prop->Draw(camPosition+portal->other->pos-portal->pos);
+            }
+            //Restore ProjectionMatrix
+            projection = projBackup;
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
+        }
+        else
+        {
+            //Clip ProjectionMatrix
+            mat4 projBackup = projection;
+            projection = portal->clippedProjMat(currentWindow->localPlayer->rotation, projection);
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
+
+            DrawScene(camPosition+portal->other->pos-portal->pos, recursionLevel + 1);
+
+            //Restore ProjectionMatrix
+            projection = projBackup;
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
+            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
+        }
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilMask(0xFF);
+        glStencilFunc(GL_NOTEQUAL, recursionLevel + 1, 0xFF);
+
+        glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
+
+        portal->Draw(camPosition);
+    }
+
+	glDisable(GL_STENCIL_TEST);
+	glStencilMask(0x00);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_ALWAYS);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	for(auto portal : currentWindow->portals)
+		portal->Draw(camPosition);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_STENCIL_TEST);
+	glStencilMask(0x00);
+	glStencilFunc(GL_LEQUAL, recursionLevel, 0xFF);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+
+    for (auto &ent : currentWindow->props)
+    {
+        ent->Draw(camPosition);
+    }
+
+}
+
 void MainWindow::keyboardCallback(unsigned char key, int, int, bool down)
 {
     switch (key)
@@ -213,21 +295,21 @@ void MainWindow::timerCallback(int)
     currentWindow->handleInput();
     currentWindow->localPlayer->applyPhysics();
     currentWindow->localPlayer->resetSkippedCollision();
-    for (auto portal : currentWindow->portals)
+    for (auto &portal : currentWindow->portals)
     {
         if(currentWindow->localPlayer->checkPortalCollision(*portal))
             break;//If teleport has occured
     }
     //for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
-    for (auto ent : currentWindow->props)
+    for (auto &ent : currentWindow->props)
     {
         ent->updatePosition();
         if(currentWindow->localPlayer->noClipMode)
             continue;
         currentWindow->localPlayer->correctPosition(*ent);
     }
-    //reactualisation de l'affichage (toutes les 15ms <=> 66.6fps)
-    if (i >= 3)
+    //reactualisation de l'affichage (toutes les 25ms)
+    if (i >= 5)
     {
         glutPostRedisplay();
         i = 0;
@@ -241,10 +323,10 @@ void MainWindow::loadData()
     //TODO: shader for planes // color rendering for floor
     shaderProgramIdColored = read_shader("data/color.vert", "data/color.frag");
     shaderProgramIdTextured = read_shader("data/shader.vert", "data/shader.frag");
+    projection = mat4::matrice_projection(80.0f * M_PI / 180.0f, 16.0f / 9.0f, 0.01f, 100.0f);
 
     glUseProgram(shaderProgramIdColored);
     //matrice de projection
-    projection = mat4::matrice_projection(80.0f * M_PI / 180.0f, 16.0f / 9.0f, 0.01f, 100.0f);
     glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
     PRINT_OPENGL_ERROR();
 
@@ -253,7 +335,6 @@ void MainWindow::loadData()
     PRINT_OPENGL_ERROR();
 
     glUseProgram(shaderProgramIdTextured);
-    projection = mat4::matrice_projection(80.0f * M_PI / 180.0f, 16.0f / 9.0f, 0.01f, 100.0f);
     glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
     PRINT_OPENGL_ERROR();
 
