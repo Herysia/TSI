@@ -18,7 +18,7 @@
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "RectangularBlock.hpp"
-#include "Elevator.hpp"
+#include "MovingBlock.hpp"
 
 class MainWindow
 {

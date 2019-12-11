@@ -296,10 +296,16 @@ void MainWindow::loadData()
     //plane for the slope
     props.push_back(new Floor(vec3(-5.6, 3.8f, -8.5), vec3(5.5, 4.92f, -8.5), vec3(5.5, 4.92f, -5.5), vec3(-5.6, 3.8f, -5.5)));
 
-    Elevator* elevator = new Elevator(vec3(1, 0.0f, 0), vec3(4, 0.1f, 3));
-    elevator->setMinMax(0, 4.9);
-    elevator->setSpeed(0.01f);
+    //Vertical movingBlock
+    MovingBlock* elevator = new MovingBlock(vec3(1, 0.0f, 0), vec3(4, 0.1f, 3));
+    elevator->setVerticalMinMax(0, 4.9);
+    elevator->setVerticalSpeed(0.01f);
     props.push_back(elevator);
+    //Horizontal moving block
+    MovingBlock* horizontal = new MovingBlock(vec3(5.5, 4.8f, -5.5), vec3(8.5, 4.9f, -2.5));
+    horizontal->setMinMax(vec3(5.5, 4.8f, -5.5), vec3(8.5, 4.9f, 5.5));
+    horizontal->setSpeed(vec3(0,0,0.01f));
+    props.push_back(horizontal);
 
 }
 

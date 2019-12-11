@@ -183,11 +183,13 @@ void Player::correctPosition(const Entity &other)
     else //We use  AABB-AABB collision for walls and objects (simple)
     {
         bool isVerticallyColliding = applyVerticalCollision(other.getAABB());
-        if(isVerticallyColliding && Entity::isTypeOf<Elevator>(&other))
+        if(isVerticallyColliding && Entity::isTypeOf<MovingBlock>(&other))
         {
-            Elevator* elevator = (Elevator*)&other;
-            if(elevator->getSpeed() < 0.0f)
-                speed.y = elevator->getSpeed();
+            MovingBlock* movingBlock = (MovingBlock*)&other;
+            vec3 movingBlockSpeed = movingBlock->getSpeed();
+            if(movingBlockSpeed.y < 0.0001f)
+                speed.y = movingBlockSpeed.y;
+            move(vec3(movingBlockSpeed.x, 0, movingBlockSpeed.z));
         }
         if(!isVerticallyColliding || other.getAABB().shouldBeInside) // we cant collide both vertically and horizontally unless we should be outside
             applyHorizontalCollision(other.getAABB());
