@@ -201,14 +201,14 @@ void Player::correctPosition(const Entity &other)
 bool Player::checkPortalCollision(const Portal &portal)
 {
     AABB other = portal.getAABB();
-    if((aabb.min.x <= other.max.x && aabb.max.x >= other.min.x)
-    && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)
-    && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))
+    if((portal.axis == Portal::XAXIS && (aabb.max.x <= other.max.x && aabb.min.x >= other.min.x) || portal.axis == Portal::ZAXIS && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x))
+    && (portal.axis == Portal::ZAXIS && (aabb.max.z <= other.max.z && aabb.min.z >= other.min.z) || portal.axis == Portal::XAXIS && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))
+    && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y))
     {
         skipCollision = true;
         if(portal.axis == Portal::ZAXIS)
         {
-            if(camPosition.x - portal.pos.x > 0  ^ camPosition.x-speed.x - portal.pos.x > 0)//should teleport
+            if(camPosition.x - portal.pos.x > 0  ^ camPosition.x-speed.x - portal.pos.x > 0)
             {
                 move(portal.other->pos - portal.pos);
                 return true;
@@ -216,7 +216,7 @@ bool Player::checkPortalCollision(const Portal &portal)
         }
         else
         {
-            if(camPosition.z - portal.pos.z > 0  ^ camPosition.z-speed.z - portal.pos.z > 0)//should teleport
+            if(camPosition.z - portal.pos.z > 0  ^ camPosition.z-speed.z - portal.pos.z > 0)
             {
                 move(portal.other->pos - portal.pos);
                 return true;
