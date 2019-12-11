@@ -97,9 +97,10 @@ void MainWindow::displayCallback()
         PRINT_OPENGL_ERROR();
     }
 
-    for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
+    //for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
+    for (auto ent : currentWindow->props)
     {
-        (*it)->Draw(currentWindow->localPlayer->getCamPosition());
+        ent->Draw(currentWindow->localPlayer->getCamPosition());
     }
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
@@ -207,18 +208,13 @@ void MainWindow::timerCallback(int)
     currentWindow->localPlayer->updateView();
     currentWindow->handleInput();
     currentWindow->localPlayer->applyPhysics();
-    for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
+    //for (std::vector<Entity *>::iterator it = currentWindow->props.begin(); it != currentWindow->props.end(); ++it)
+    for (auto ent : currentWindow->props)
     {
-        (*it)->updatePosition();
+        ent->updatePosition();
         if(currentWindow->localPlayer->noClipMode)
             continue;
-        currentWindow->localPlayer->correctPosition(**it.base());
-        /*
-        if(currentWindow->localPlayer->checkCollision(*it.base()))
-        {
-            currentWindow->localPlayer->correctPosition(*it.base());
-            std::cout << "1" << std::endl;
-        }*/
+        currentWindow->localPlayer->correctPosition(*ent);
     }
     //reactualisation de l'affichage (toutes les 15ms <=> 66.6fps)
     if (i >= 3)
