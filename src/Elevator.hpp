@@ -18,6 +18,10 @@ class Elevator : public RectangularBlock
     {
         speed.y = speedY;
     }
+    inline float getSpeed()
+    {
+        return speed.y;
+    }
     private:
         float maxY;
         float minY;

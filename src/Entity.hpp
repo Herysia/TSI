@@ -43,6 +43,11 @@ public:
     {
         ;
     }
+    //
+    template<typename Base, typename T>
+    static inline bool isTypeOf(const T *type) {
+        return dynamic_cast<const Base*>(type) != nullptr;
+    }
 private:
     inline bool isColored()
     {

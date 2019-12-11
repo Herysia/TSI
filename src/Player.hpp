@@ -3,6 +3,7 @@
 
 #include "Entity.hpp"
 #include "vec3.hpp"
+#include "Elevator.hpp"
 #include <vector>
 
 class Player : public Entity

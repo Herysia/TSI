@@ -24,7 +24,7 @@ src/format/*.[ch]pp
 )
 
 SET(CMAKE_BUILD_TYPE Debug)
-SET(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra" )
+SET(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra -std=c++0x" )
 SET(CMAKE_CXX_COMPILER "g++")
 
 
