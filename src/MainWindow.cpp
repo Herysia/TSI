@@ -258,7 +258,7 @@ void MainWindow::loadData()
     //props.push_back(new Floor());//vec3(0.42f, 1.0f, 0.42f)
     //props.push_back(new RectangularBlock(vec3(3, -1, 3), vec3(6, 0, 6)));
     //Box
-    props.push_back(new RectangularBlock(vec3(-10.0f, 0.0f, -10.0f), vec3(10.0f, 6.5f, 10.0f), true));
+    props.push_back(new RectangularBlock(vec3(-10.0f, 0.0f, -10.0f), vec3(10.0f, 10.0f, 10.0f), true));
 
     //big stairs
     props.push_back(new RectangularBlock(vec3(2.5, 0.0f, -8.5), vec3(5.5f, 0.7f, -5.5)));//overlapping
@@ -292,7 +292,7 @@ void MainWindow::loadData()
     props.push_back(new RectangularBlock(vec3(2.5, 4.5f, -8.5), vec3(3.5, 4.6f, -5.5)));
     props.push_back(new RectangularBlock(vec3(3.5, 4.6f, -8.5), vec3(4.5, 4.7f, -5.5)));
     props.push_back(new RectangularBlock(vec3(4.5, 4.7f, -8.5), vec3(5.5, 4.8f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(10, 4.9f, -5.5)));
+    props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(8.5, 4.9f, -5.5)));
     //plane for the slope
     props.push_back(new Floor(vec3(-5.6, 3.8f, -8.5), vec3(5.5, 4.92f, -8.5), vec3(5.5, 4.92f, -5.5), vec3(-5.6, 3.8f, -5.5)));
 
@@ -303,8 +303,8 @@ void MainWindow::loadData()
     props.push_back(elevator);
     //Horizontal moving block
     MovingBlock* horizontal = new MovingBlock(vec3(5.5, 4.8f, -5.5), vec3(8.5, 4.9f, -2.5));
-    horizontal->setMinMax(vec3(5.5, 4.8f, -5.5), vec3(8.5, 4.9f, 5.5));
-    horizontal->setSpeed(vec3(0,0,0.01f));
+    horizontal->setMinMax(vec3(5.5, 4.8f, -5.5), vec3(8.5, 8.9f, 5.5));
+    horizontal->setSpeed(vec3(0,0.005,0.01f));
     props.push_back(horizontal);
 
 }
