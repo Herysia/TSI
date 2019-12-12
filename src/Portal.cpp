@@ -1,11 +1,12 @@
 #include "Portal.hpp"
 
-Portal::Portal(vec2 min, vec2 max, float depth,  bool axis)
+Portal::Portal(vec2 min, vec2 max, float depth,  bool axis, bool dir)
 {
     shaderProgramId = shaderProgramIdColored;
     color = vec3(1,0,0);
     mode = MODE_AABB;
     this->axis = axis;
+    this->dir = dir;
     glUseProgram(shaderProgramId);
     float sommets[3*4];
     if(axis == XAXIS)
@@ -99,46 +100,39 @@ void Portal::linkPortals(Portal* other)
     this->other = other;
     other->other = this;
 }
-//https://aras-p.info/texts/obliqueortho.html
-mat4 const Portal::clippedProjMat(mat4 const &rotation, mat4 const &projMat) const
+
+float Portal::getViewDelta() const
 {
-    vec3 normal(0.0f, 0.0f, 1.0f);
-    if(axis == ZAXIS)
-        normal = vec3(1.0f, 0.0f, 0.0f);
-    vec3 clipPos(
-        rotation.M[0]*pos.x + rotation.M[1]*pos.y + rotation.M[2]*pos.z + rotation.M[3],
-        rotation.M[4]*pos.x + rotation.M[5]*pos.y + rotation.M[6]*pos.z + rotation.M[7],
-        rotation.M[8]*pos.x + rotation.M[9]*pos.y + rotation.M[10]*pos.z + rotation.M[11]
-    );
-    vec3 clipNormal(
-        rotation.M[0]*normal.x + rotation.M[1]*normal.y + rotation.M[2]*normal.z,
-        rotation.M[4]*normal.x + rotation.M[5]*normal.y + rotation.M[6]*normal.z,
-        rotation.M[8]*normal.x + rotation.M[9]*normal.y + rotation.M[10]*normal.z
-    );
+    if(axis == other->axis)
+    {
+        if(dir == other->dir)
+            return 0.0f;
+        return M_PI;
+    }
+    else
+    {
+        if(dir == other->dir)
+        {
+            if(axis == XAXIS)
+                return M_PI/2.0f;
+            return -M_PI/2.0f;
+        }
+        else
+        {
+            if(axis == XAXIS)
+                return -M_PI/2.0f;
+            return +M_PI/2.0f;
+        }
+         
 
-    //Clip plane Ax + By + Cz + D =0
-    //clipNormal = vec3(A, B, C)
-    float d = clipPos.dot(clipNormal);
-    mat4 inv = projMat.inverse();
-    float v4x = sgn(clipNormal.x);
-    float v4y = sgn(clipNormal.y);
-    float v4z = 1.0f;
-    float v4w = 1.0f;
+    }
     
-    float qx = rotation.M[0]*v4x + rotation.M[1]*v4y + rotation.M[2]*v4z + rotation.M[3]*v4w;
-    float qy = rotation.M[4]*v4x + rotation.M[5]*v4y + rotation.M[6]*v4z + rotation.M[7]*v4w;
-    float qz = rotation.M[8]*v4x + rotation.M[9]*v4y + rotation.M[10]*v4z + rotation.M[11]*v4w;
-    float qw = rotation.M[12]*v4x + rotation.M[13]*v4y + rotation.M[14]*v4z + rotation.M[15]*v4w;
-
-    float dot = clipNormal.x*qx + clipNormal.y*qy + clipNormal.z*qz + d*qw;
-    qx=clipNormal.x * (2.0f/dot);
-    qy=clipNormal.y * (2.0f/dot);
-    qz=clipNormal.z * (2.0f/dot);
-    qw=d * (2.0f/dot);
-	mat4 newProj = projMat;
-    newProj.M[2] = qx -projMat.M[3];
-    newProj.M[6] = qy -projMat.M[7];
-    newProj.M[10] = qz -projMat.M[11];
-    newProj.M[11] = qw -projMat.M[15];
-	return newProj;
-} 
+}
+vec3 Portal::getPosDelta(const vec3 &currPos, float deltaY) const
+{
+    vec3 delta = currPos-pos;
+    delta = other->pos + vec3(delta.x*cos(deltaY) - delta.z*sin(deltaY), 0.0f, delta.x*sin(deltaY) - delta.z*cos(deltaY)) - currPos;
+    delta.y = other->pos.y - pos.y;
+    std::cout << deltaY << " : " << delta << std::endl;
+    return delta;
+}

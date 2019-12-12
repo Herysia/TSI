@@ -13,6 +13,8 @@ class Player : public Entity
 public:
     Player();
     void updateView();
+    void setPortalView(float angleY);
+    void resetPortalView();
     void Draw();
     void applyPhysics();
 

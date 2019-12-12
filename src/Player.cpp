@@ -15,6 +15,17 @@ void Player::updateView()
     viewAngle = viewAngle.clamp();
     rotation = mat4::matrice_rotation(viewAngle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(viewAngle.y, 0.0f, 1.0f, 0.0f);
 }
+void Player::setPortalView(float angleY)
+{
+    vec3 angle = viewAngle;
+    angle.y+=angleY;
+    angle = angle.clamp();
+    rotation = mat4::matrice_rotation(angle.x, 1.0f, 0.0f, 0.0f) * mat4::matrice_rotation(angle.y, 0.0f, 1.0f, 0.0f);
+}
+void Player::resetPortalView()
+{
+    updateView();
+}
 void Player::Draw()
 {
     return;
@@ -210,7 +221,9 @@ bool Player::checkPortalCollision(const Portal &portal)
         {
             if(camPosition.x - portal.pos.x > 0  ^ camPosition.x-speed.x - portal.pos.x > 0)
             {
-                move(portal.other->pos - portal.pos);
+                float angleY = portal.getViewDelta();
+                move(portal.getPosDelta(camPosition, angleY));
+                rotateAngle(0.0f, angleY, 0.0f);
                 return true;
             }
         }
@@ -218,7 +231,9 @@ bool Player::checkPortalCollision(const Portal &portal)
         {
             if(camPosition.z - portal.pos.z > 0  ^ camPosition.z-speed.z - portal.pos.z > 0)
             {
-                move(portal.other->pos - portal.pos);
+                float angleY = portal.getViewDelta();
+                move(portal.getPosDelta(camPosition, angleY));
+                rotateAngle(0.0f, angleY, 0.0f);
                 return true;
             }
         }

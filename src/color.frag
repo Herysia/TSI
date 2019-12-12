@@ -1,4 +1,4 @@
-#version 120
+#version 130
 
 varying vec3 color;
 varying vec3 coord_3d;
