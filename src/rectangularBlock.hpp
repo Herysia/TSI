@@ -10,6 +10,8 @@ public:
     RectangularBlock(vec3 min, vec3 max, bool shouldBeInside = false);
     virtual void Draw(const vec3 &camPosition) override
     {
+        // if(aabb.shouldBeInside)
+        //     return;
         glUseProgram(shaderProgramId);
         //envoie des parametres uniformes
         {

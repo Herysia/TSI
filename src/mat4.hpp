@@ -29,12 +29,20 @@ public:
 
     /** Produit de matrice */
     mat4 operator*(const mat4 &m2);
-
+    
+    inline void operator*=(float b) {
+        for (int i = 0; i < 16; ++i) { M[i] *= b; }
+    }
+    inline void operator/=(float b) {
+        operator*=(1.0f / b);
+    }
     /** Recupere un pointeur sur les donnees de la matrice */
     const float *pointeur();
 
     /** Calcule la transposee d'une matrice */
     mat4 transpose();
+
+    mat4 inverse() const;
 
     /** Construit une matrice de rotation ayant pour axe: (axe_x,axe_y,axe_z) et l'angle donne */
     static mat4 matrice_rotation(float angle, float axe_x, float axe_y, float axe_z);

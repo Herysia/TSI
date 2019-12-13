@@ -14,11 +14,13 @@ public:
         ZAXIS = true
     };
     virtual void Draw(const vec3 &camPosition) override;
-    bool axis = XAXIS;
+    void DrawPortals(const vec3 &camPosition, const std::vector<Entity*> &props, int recursionLevel = 0);
     void linkPortals(Portal* other);
+    mat4 const clippedProjMat(mat4 const &rotation, mat4 const &projMat) const;
 
     Portal* other;
     vec3 pos;
+    bool axis = XAXIS;
 private:
 protected:
 

@@ -35,7 +35,7 @@ void Player::setVerticalSpeed(float verticalSpeed)
 {
     speed.y = verticalSpeed*0.02;
 }
-void Player::setHorizontalSpeed(vec2 horizontalSpeed)
+void Player::setHorizontalSpeed(const vec2 &horizontalSpeed)
 {
     speed.x = horizontalSpeed.x;
     speed.z = horizontalSpeed.y;
@@ -45,7 +45,7 @@ void Player::move(float x, float y, float z)
     move(vec3(x, y, z));
 }
 
-void Player::move(vec3 dist)
+void Player::move(const vec3 &dist)
 {
     camPosition += dist;
     aabb.max += dist;
@@ -64,7 +64,7 @@ void Player::rotateAngle(float x, float y, float z)
 {
     rotateAngle(vec3(x, y, z));
 }
-void Player::rotateAngle(vec3 angle)
+void Player::rotateAngle(const vec3 &angle)
 {
     viewAngle += angle;
 }
@@ -224,4 +224,18 @@ bool Player::checkPortalCollision(const Portal &portal)
         }
     }
     return false;
+}
+
+vec3 Player::AngleVector(const vec3 &viewAngle)
+{
+    vec3 forward;
+    float sp = sin(viewAngle.x);
+    float cp = cos(viewAngle.x);
+    float sy = sin(viewAngle.x);
+    float cy = cos(viewAngle.x);
+
+    forward.x = cp*cy;
+    forward.y = cp*sy;
+    forward.z = -sp;
+    return forward.normalize();
 }

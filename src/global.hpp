@@ -8,6 +8,9 @@ extern GLuint shaderProgramIdColored;
 extern GLuint shaderProgramIdTextured;
 
 #define Abs(x) (x >= 0 ? x : -x)
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 typedef struct keyboardKeyState
 {
     bool forward = false;
