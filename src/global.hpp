@@ -27,6 +27,14 @@ typedef struct keyboardKeyState
     };
     View view;
 };
+class vec4
+{
+public:
+    vec4(float x, float y, float z, float w){
+        this->x = x;this->y = y;this->z = z;this->w = w;
+    }
+    float x,y,z,w;
+};
 inline void loadTexture(const char *filename, GLuint *texture_id)
 {
     glUseProgram(shaderProgramIdTextured);

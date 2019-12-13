@@ -97,74 +97,72 @@ void MainWindow::displayCallback()
         PRINT_OPENGL_ERROR();
     }
 
-    currentWindow->DrawScene(currentWindow->localPlayer->getCamPosition());
+    currentWindow->DrawScene();
 
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
 }
 
 //Code adapted from https://github.com/ThomasRinsma/opengl-game-test/blob/86d4dcfccdfe067d6154ff94992e347856578632/src/scene.cc
-void MainWindow::DrawScene(const vec3 &camPosition, int recursionLevel)
+void MainWindow::DrawScene()
 {
     for(auto portal : currentWindow->portals)
     {
+        //Draw portal on stencil buffer
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glDepthMask(GL_FALSE);
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
-        glStencilFunc(GL_NOTEQUAL, recursionLevel, 0xFF);
+        glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
         glStencilOp(GL_INCR, GL_KEEP, GL_KEEP);
         glStencilMask(0xFF);
-        portal->Draw(camPosition);
+        portal->Draw(currentWindow->localPlayer->getCamPosition());
+        //Draw inner portal
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDepthMask(GL_TRUE);
+        
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glStencilMask(0x00);
+        glStencilFunc(GL_EQUAL, 1, 0xFF);
 
-        if (recursionLevel == maxRecursionLevel)
+        //EnableClipping & correct angle
+        vec3 normal(0.0f, 0.0f, 1.0f);
+        float sgn = 1.0f;
+        if(portal->other->axis == Portal::ZAXIS)
+            normal = vec3(1.0f, 0.0f, 0.0f);
+        if(portal->other->dir == Portal::NEGATIVE)
+            sgn = -1.0f;
+        normal = normal*sgn;
+
+        float deltaY = portal->getViewDelta();
+        currentWindow->localPlayer->setPortalView(deltaY);
+        vec3 detlaPos = portal->getPosDelta(currentWindow->localPlayer->getCamPosition(), deltaY);
+        glUseProgram(shaderProgramIdColored);
+        glUniform4f(get_uni_loc(shaderProgramIdColored, "clip_plane"), normal.x, normal.y, normal.z, -sgn*(portal->other->axis==Portal::ZAXIS ? portal->other->getAABB().max.x : portal->other->getAABB().max.z));
+        glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "rotation_view"), 1, false, currentWindow->localPlayer->rotation.pointeur());
+
+        for(auto &prop : currentWindow->props)
         {
-            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-            glDepthMask(GL_TRUE);
-            
-            glClear(GL_DEPTH_BUFFER_BIT);
-            glEnable(GL_DEPTH_TEST);
-            glEnable(GL_STENCIL_TEST);
-            glStencilMask(0x00);
-            glStencilFunc(GL_EQUAL, recursionLevel + 1, 0xFF);
-            //Clip ProjectionMatrix
-            mat4 projBackup = projection;
-            projection = portal->clippedProjMat(currentWindow->localPlayer->rotation, projection);
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
-            for(auto &prop : currentWindow->props)
-            {
-                prop->Draw(camPosition+portal->other->pos-portal->pos);
-            }
-            //Restore ProjectionMatrix
-            projection = projBackup;
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
+            prop->Draw(currentWindow->localPlayer->getCamPosition()+detlaPos);
         }
-        else
-        {
-            //Clip ProjectionMatrix
-            mat4 projBackup = projection;
-            projection = portal->clippedProjMat(currentWindow->localPlayer->rotation, projection);
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
 
-            DrawScene(camPosition+portal->other->pos-portal->pos, recursionLevel + 1);
+        //Disable Clipping & correct angle
+        currentWindow->localPlayer->resetPortalView();
+        glUseProgram(shaderProgramIdColored);
+        glUniform4f(get_uni_loc(shaderProgramIdColored, "clip_plane"), 0.0f, 0.0f, 0.0f, 0.0f);
+        glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "rotation_view"), 1, false, currentWindow->localPlayer->rotation.pointeur());
 
-            //Restore ProjectionMatrix
-            projection = projBackup;
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
-            glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
-        }
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glDepthMask(GL_FALSE);
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0xFF);
-        glStencilFunc(GL_NOTEQUAL, recursionLevel + 1, 0xFF);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 
         glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
 
-        portal->Draw(camPosition);
+        portal->Draw(currentWindow->localPlayer->getCamPosition());
     }
 
 	glDisable(GL_STENCIL_TEST);
@@ -175,20 +173,21 @@ void MainWindow::DrawScene(const vec3 &camPosition, int recursionLevel)
 	glDepthFunc(GL_ALWAYS);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	for(auto portal : currentWindow->portals)
-		portal->Draw(camPosition);
+		portal->Draw(currentWindow->localPlayer->getCamPosition());
+
 	glDepthFunc(GL_LESS);
 	glEnable(GL_STENCIL_TEST);
 	glStencilMask(0x00);
-	glStencilFunc(GL_LEQUAL, recursionLevel, 0xFF);
+	glStencilFunc(GL_EQUAL, 0, 0xFF);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 
+
     for (auto &ent : currentWindow->props)
     {
-        ent->Draw(camPosition);
+        ent->Draw(currentWindow->localPlayer->getCamPosition());
     }
-
 }
 
 void MainWindow::keyboardCallback(unsigned char key, int, int, bool down)
@@ -291,7 +290,6 @@ void MainWindow::timerCallback(int)
     static short i = 0;
     glutTimerFunc(5, timerCallback, 0);
 
-    currentWindow->localPlayer->updateView();
     currentWindow->handleInput();
     currentWindow->localPlayer->applyPhysics();
     currentWindow->localPlayer->resetSkippedCollision();
@@ -311,6 +309,7 @@ void MainWindow::timerCallback(int)
     //reactualisation de l'affichage (toutes les 25ms)
     if (i >= 5)
     {
+        currentWindow->localPlayer->updateView();
         glutPostRedisplay();
         i = 0;
     }
@@ -328,10 +327,12 @@ void MainWindow::loadData()
     glUseProgram(shaderProgramIdColored);
     //matrice de projection
     glUniformMatrix4fv(get_uni_loc(shaderProgramIdColored, "projection"), 1, false, projection.pointeur());
+    glUniform4f(get_uni_loc(shaderProgramIdColored, "clip_plane"), 0.0f, 0.0f, 0.0f, 0.0f);
     PRINT_OPENGL_ERROR();
 
     //activation de la gestion de la profondeur
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CLIP_DISTANCE0);
     PRINT_OPENGL_ERROR();
 
     glUseProgram(shaderProgramIdTextured);
@@ -340,6 +341,7 @@ void MainWindow::loadData()
 
     //activation de la gestion de la profondeur
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CLIP_DISTANCE0);
     PRINT_OPENGL_ERROR();
 
     localPlayer = new Player();
@@ -398,13 +400,25 @@ void MainWindow::loadData()
     horizontal->setSpeed(vec3(0,0.005,0.01f));
     props.push_back(horizontal);
 
-    Portal* p1 = new Portal(vec2(0,0), vec2(3,3), 9.99f, Portal::XAXIS);
-    Portal* p2 = new Portal(vec2(0,0), vec2(3,3), -9.99f, Portal::XAXIS);
-    p1->linkPortals(p2);
-    portals.push_back(p2);
-    portals.push_back(p1);
+    //Objective
+    props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(8.5, 4.9f, -5.5)));
+
     
-    props.push_back(new RectangularBlock(vec3(3.1, 0, -10), vec3(3.2, 0.2, 10)));
+    //
+    //Box
+    props.push_back(new RectangularBlock(vec3(0.0f, 11.0f, 0.0f), vec3(3.0f, 13.0f, 3.0f), true));
+    props.push_back(new RectangularBlock(vec3(1.5f, 11.0f, 1.5f), vec3(3.0f, 13.0f, 3.0f)));
+
+    Portal* p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);
+    Portal* p2 = new Portal(vec2(-2.0f,0.0f), vec2(-0.5f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
+    p1->linkPortals(p2);
+    portals.push_back(p1);
+    portals.push_back(p2);
+    p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);
+    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
+    p1->linkPortals(p2);
+    portals.push_back(p1);
+    portals.push_back(p2);
 
 }
 
