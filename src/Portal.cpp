@@ -106,8 +106,8 @@ float Portal::getViewDelta() const
     if(axis == other->axis)
     {
         if(dir == other->dir)
-            return 0.0f;
-        return M_PI;
+            return M_PI;
+        return 0.0f;
     }
     else
     {
@@ -131,8 +131,7 @@ float Portal::getViewDelta() const
 vec3 Portal::getPosDelta(const vec3 &currPos, float deltaY) const
 {
     vec3 delta = currPos-pos;
-    delta = other->pos + vec3(delta.x*cos(deltaY) - delta.z*sin(deltaY), 0.0f, delta.x*sin(deltaY) - delta.z*cos(deltaY)) - currPos;
+    delta = other->pos + vec3(delta.x*cos(deltaY) - delta.z*sin(deltaY), 0.0f, delta.x*sin(deltaY) + delta.z*cos(deltaY)) - currPos;
     delta.y = other->pos.y - pos.y;
-    std::cout << deltaY << " : " << delta << std::endl;
     return delta;
 }

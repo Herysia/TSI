@@ -73,7 +73,6 @@ private:
     void specialCallback(int key, int, int, bool down);
     static void mouseCallback(int x, int y);
 
-    int maxRecursionLevel = 0;
 protected:
 };
 

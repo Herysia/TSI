@@ -20,7 +20,6 @@ public:
         NEGATIVE = true
     };
     virtual void Draw(const vec3 &camPosition) override;
-    void DrawPortals(const vec3 &camPosition, const std::vector<Entity*> &props, int recursionLevel = 0);
     void linkPortals(Portal* other);
     float getViewDelta() const;
     vec3 getPosDelta(const vec3 &currPos, float deltaY) const;

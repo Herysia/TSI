@@ -400,13 +400,25 @@ void MainWindow::loadData()
     horizontal->setSpeed(vec3(0,0.005,0.01f));
     props.push_back(horizontal);
 
-    Portal* p1 = new Portal(vec2(0,0), vec2(3,3), 9.97f, Portal::XAXIS, Portal::NEGATIVE);
-    Portal* p2 = new Portal(vec2(0,0), vec2(3,3), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
+    //Objective
+    props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(8.5, 4.9f, -5.5)));
+
+    
+    //
+    //Box
+    props.push_back(new RectangularBlock(vec3(0.0f, 11.0f, 0.0f), vec3(3.0f, 13.0f, 3.0f), true));
+    props.push_back(new RectangularBlock(vec3(1.5f, 11.0f, 1.5f), vec3(3.0f, 13.0f, 3.0f)));
+
+    Portal* p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);
+    Portal* p2 = new Portal(vec2(-2.0f,0.0f), vec2(-0.5f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
     p1->linkPortals(p2);
     portals.push_back(p1);
     portals.push_back(p2);
-    
-    props.push_back(new RectangularBlock(vec3(3.1, 0, -10), vec3(3.2, 0.2, 10)));
+    p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);
+    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
+    p1->linkPortals(p2);
+    portals.push_back(p1);
+    portals.push_back(p2);
 
 }
 
