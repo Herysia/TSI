@@ -149,9 +149,13 @@ bool Player::applyHorizontalCollision(const AABB &other)
          && (aabb.min.y+0.003f <= other.max.y && aabb.max.y >= other.min.y)                //overlapping on y axis; +0.003f: hotfix for overlapped objects
          && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))                      //overlapping on z axis;
         || (other.shouldBeInside 
-        && (aabb.max.x >= other.max.x || aabb.min.x <= other.min.x 
-            || aabb.max.z >= other.max.z || aabb.min.z <= other.min.z) 
+        && (((aabb.max.x >= other.max.x && aabb.min.x <= other.max.x) || (aabb.min.x <= other.min.x && aabb.max.x >= other.min.x) && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))
+        || ((aabb.max.z >= other.max.z && aabb.min.z <= other.max.z) || (aabb.min.z <= other.min.z && aabb.max.z >= other.min.z) && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x)))
         && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
+
+        // && (aabb.max.x >= other.max.x || aabb.min.x <= other.min.x 
+        //     || aabb.max.z >= other.max.z || aabb.min.z <= other.min.z) 
+        // && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
     {
         vec2 coord2D = aabb.getCenter2D();
         //find closest face
@@ -195,6 +199,12 @@ void Player::correctPosition(const Entity &other)
     }
     else //We use  AABB-AABB collision for walls and objects (simple)
     {
+        if(Entity::isTypeOf<Key>(&other))
+        {
+            if(((Key*)&other)->checkCollision(this))
+                score++;
+            return;
+        }
         bool isVerticallyColliding = applyVerticalCollision(other.getAABB());
         if(isVerticallyColliding && Entity::isTypeOf<MovingBlock>(&other))
         {
