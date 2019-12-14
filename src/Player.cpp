@@ -3,7 +3,7 @@
 Player::Player()
 {
     rotationCenter = vec3();
-    camPosition = vec3(0.0f, 1.0f, 0.0f);
+    camPosition = vec3(-7.5f, 12.0f, -7.5f);
     speed = vec3();
     size = vec3(0.1f, 1.0f, 0.1f);
     mode = MODE_AABB;
@@ -149,8 +149,8 @@ bool Player::applyHorizontalCollision(const AABB &other)
          && (aabb.min.y+0.003f <= other.max.y && aabb.max.y >= other.min.y)                //overlapping on y axis; +0.003f: hotfix for overlapped objects
          && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))                      //overlapping on z axis;
         || (other.shouldBeInside 
-        && (((aabb.max.x >= other.max.x && aabb.min.x <= other.max.x) || (aabb.min.x <= other.min.x && aabb.max.x >= other.min.x) && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))
-        || ((aabb.max.z >= other.max.z && aabb.min.z <= other.max.z) || (aabb.min.z <= other.min.z && aabb.max.z >= other.min.z) && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x)))
+        && (((aabb.max.x >= other.max.x && aabb.min.x <= other.max.x) || (aabb.min.x <= other.min.x && aabb.max.x >= other.min.x)) && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z)
+        || ((aabb.max.z >= other.max.z && aabb.min.z <= other.max.z) || (aabb.min.z <= other.min.z && aabb.max.z >= other.min.z)) && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x))
         && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
 
         // && (aabb.max.x >= other.max.x || aabb.min.x <= other.min.x 
