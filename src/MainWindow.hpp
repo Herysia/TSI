@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cmath>
 #include <vector>
+#include <sstream>
 
 #define GLEW_STATIC 1
 #include <GL/glew.h>
@@ -20,6 +21,13 @@
 #include "RectangularBlock.hpp"
 #include "MovingBlock.hpp"
 #include "Portal.hpp"
+#include "Key.hpp"
+
+#include "levelDesign/Room1.hpp"
+#include "levelDesign/Room2.hpp"
+#include "levelDesign/Room3.hpp"
+#include "levelDesign/Spawn.hpp"
+#include "levelDesign/Corridor.hpp"
 
 class MainWindow
 {
@@ -44,7 +52,7 @@ private:
     static void timerCallback(int);
     void loadData();
     void handleInput();
-    
+    void DrawHUD();
     void DrawScene();
 
     inline static void resizeHandler(int width, int height) {
@@ -69,10 +77,23 @@ private:
     {
         currentWindow->specialCallback(key, x, y, true);
     }
+    inline static void stopDrawingRules(int)
+    {
+        currentWindow->shouldDrawRules = false;
+        currentWindow->corridor1->changePortalsState(true);
+    }
     void keyboardCallback(unsigned char key, int, int, bool down); //down=1 -> key pressed down   /  down=0 -> key released
     void specialCallback(int key, int, int, bool down);
     static void mouseCallback(int x, int y);
+    void drawString(float x, float y, const std::string &str);
 
+    //GUI
+    bool shouldDrawRules = true;
+
+    Corridor* corridor0;
+    Corridor* corridor1;
+    Corridor* corridor2;
+    Corridor* corridor3;
 protected:
 };
 

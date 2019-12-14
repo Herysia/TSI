@@ -21,6 +21,7 @@ GLOB
 source_files
 src/*.[ch]pp src/shader*
 src/format/*.[ch]pp
+src/levelDesign/*.[ch]pp
 )
 
 SET(CMAKE_BUILD_TYPE Debug)

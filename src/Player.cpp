@@ -3,12 +3,13 @@
 Player::Player()
 {
     rotationCenter = vec3();
-    camPosition = vec3(-7.5f, 12.0f, -7.5f);
+    camPosition = vec3(-9.0f, 12.0f, -9.0f);
     speed = vec3();
     size = vec3(0.1f, 1.0f, 0.1f);
     mode = MODE_AABB;
     //Les yeux sont à 90% de la taille du joueur
     aabb = AABB(vec3(-size.x * 0.5f, -0.9f * size.y, -size.z * 0.5f) + camPosition, vec3(size.x * 0.5f, 0.1f * size.y, size.z * 0.5f) + camPosition);
+    rotateAngle(vec3(0.0,0.75*M_PI, 0.0f));
 }
 void Player::updateView()
 {
@@ -152,10 +153,6 @@ bool Player::applyHorizontalCollision(const AABB &other)
         && (((aabb.max.x >= other.max.x && aabb.min.x <= other.max.x) || (aabb.min.x <= other.min.x && aabb.max.x >= other.min.x)) && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z)
         || ((aabb.max.z >= other.max.z && aabb.min.z <= other.max.z) || (aabb.min.z <= other.min.z && aabb.max.z >= other.min.z)) && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x))
         && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
-
-        // && (aabb.max.x >= other.max.x || aabb.min.x <= other.min.x 
-        //     || aabb.max.z >= other.max.z || aabb.min.z <= other.min.z) 
-        // && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
     {
         vec2 coord2D = aabb.getCenter2D();
         //find closest face

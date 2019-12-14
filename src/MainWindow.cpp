@@ -98,16 +98,53 @@ void MainWindow::displayCallback()
     }
 
     currentWindow->DrawScene();
-
+    currentWindow->DrawHUD();
     //Changement de buffer d'affichage pour eviter un effet de scintillement
     glutSwapBuffers();
 }
+void MainWindow::drawString(float x, float y, const std::string &str)
+{
+	glUseProgram(0);
+    glColor3f(1., 0., 0.);
+    
+    glRasterPos2d(x, y);
+    for (unsigned int n=0; n<str.size(); ++n) {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
+    }
+}
+void MainWindow::DrawHUD()
+{
+    if(shouldDrawRules)
+    {
+        drawString(-0.22f, 0.0f, "Ramassez tous les cubes rouges");
+        //once
+        static bool swap = true;
+        if(swap)
+        {
+            glutTimerFunc(5000, stopDrawingRules, 0);
+            swap = true;
+        }
+    }
+    //Drawing score
+    std::ostringstream oss;
+    oss << currentWindow->localPlayer->getScore() << " / " << Key::maxScore;
+    std::string scoreString = oss.str();
+    drawString(0.9f, -0.95f, scoreString);
 
+    //Drawing victory
+    if(currentWindow->localPlayer->getScore() ==Key::maxScore)
+    {
+        drawString(-0.05f, 0.0f, "BRAVO !!");
+    }
+
+}
 //Code adapted from https://github.com/ThomasRinsma/opengl-game-test/blob/86d4dcfccdfe067d6154ff94992e347856578632/src/scene.cc
 void MainWindow::DrawScene()
 {
     for(auto portal : currentWindow->portals)
     {
+        if(!portal->state)
+            continue;
         //Draw portal on stencil buffer
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glDepthMask(GL_FALSE);
@@ -173,8 +210,11 @@ void MainWindow::DrawScene()
 	glDepthFunc(GL_ALWAYS);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	for(auto portal : currentWindow->portals)
+    {
+        if(!portal->state)
+            continue;
 		portal->Draw(currentWindow->localPlayer->getCamPosition());
-
+    }
 	glDepthFunc(GL_LESS);
 	glEnable(GL_STENCIL_TEST);
 	glStencilMask(0x00);
@@ -295,6 +335,8 @@ void MainWindow::timerCallback(int)
     currentWindow->localPlayer->resetSkippedCollision();
     for (auto &portal : currentWindow->portals)
     {
+        if(!portal->state)
+            continue;
         if(currentWindow->localPlayer->checkPortalCollision(*portal))
             break;//If teleport has occured
     }
@@ -345,81 +387,45 @@ void MainWindow::loadData()
     PRINT_OPENGL_ERROR();
 
     localPlayer = new Player();
-    //props.push_back(Table(0.01f, 0.01f, 0.01f));
-    //props.push_back(Table(0.02f, 0.02f, 0.02f));
-    //props.push_back(RectangularBlock(props.back().getAABB().min, props.back().getAABB().max));
-    //props.push_back(new Floor());//vec3(0.42f, 1.0f, 0.42f)
-    //props.push_back(new RectangularBlock(vec3(3, -1, 3), vec3(6, 0, 6)));
-    //Box
-    props.push_back(new RectangularBlock(vec3(-10.0f, 0.0f, -10.0f), vec3(10.0f, 10.0f, 10.0f), true));
+    //Initialising number of keys to 0
+    Key::maxScore = 0;
+    Spawn spawn(props, portals);
 
-    //big stairs
-    //props.push_back(new RectangularBlock(vec3(2.5, 0.0f, -8.5), vec3(2.5f, 0.7f, -5.5)));//overlapping
-    props.push_back(new RectangularBlock(vec3(5.5f, 0.0f, -8.5), vec3(8.5, 0.7f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(5.5, 0.7f, -5.5), vec3(8.5, 1.4f, -1.83)));
-    props.push_back(new RectangularBlock(vec3(5.5, 1.4f, -1.83), vec3(8.5, 2.2f, 1.83)));
-    props.push_back(new RectangularBlock(vec3(5.5, 2.1f, 1.83), vec3(8.5, 3.0f, 5.5)));
-    props.push_back(new RectangularBlock(vec3(5.5, 3.0f, 5.5), vec3(8.5, 3.8f, 8.5)));
-
-    //small jumps
-    props.push_back(new RectangularBlock(vec3(3.5, 3.4f, 5.5), vec3(4.5, 3.8f, 8.5)));
-    props.push_back(new RectangularBlock(vec3(1.5, 3.4f, 5.5), vec3(2.5, 3.8f, 8.5)));
-    props.push_back(new RectangularBlock(vec3(-0.5, 3.4f, 5.5), vec3(0.5, 3.8f, 8.5)));
-    props.push_back(new RectangularBlock(vec3(-2.5, 3.4f, 5.5), vec3(-1.5, 3.8f, 8.5)));
-    props.push_back(new RectangularBlock(vec3(-4.5, 3.4f, 5.5), vec3(-3.5, 3.8f, 8.5)));
+    //Main room corridors
+    corridor0 = new Corridor(props, portals);
+    corridor1 = new Corridor(props, portals, vec3(5.0f,0.0f,5.0f));
+    corridor2 = new Corridor(props, portals, vec3(5.0f,0.0f,0.0f));
+    corridor3 = new Corridor(props, portals, vec3(0.0f,0.0f,5.0f));
     
-    //tiny path
-    props.push_back(new RectangularBlock(vec3(-8.5, 3.4f, 5.5), vec3(-5.5, 3.8f, 8.5)));
-    props.push_back(new RectangularBlock(vec3(-7.2, 3.4f, -5.5), vec3(-6.8, 3.8f, 5.5)));
-    props.push_back(new RectangularBlock(vec3(-8.5, 3.4f, -8.5), vec3(-5.5, 3.8f, -5.5)));
-    
-    //autostairs
-    props.push_back(new RectangularBlock(vec3(-5.5, 3.4f, -8.5), vec3(-4.5, 3.8f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(-4.5, 3.8f, -8.5), vec3(-3.5, 3.9f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(-3.5, 3.9f, -8.5), vec3(-2.5, 4.0f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(-2.5, 4.0f, -8.5), vec3(-1.5, 4.1f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(-1.5, 4.1f, -8.5), vec3(-0.5, 4.2f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(-0.5, 4.2f, -8.5), vec3(0.5, 4.3f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(0.5, 4.3f, -8.5), vec3(1.5, 4.4f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(1.5, 4.4f, -8.5), vec3(2.5, 4.5f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(2.5, 4.5f, -8.5), vec3(3.5, 4.6f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(3.5, 4.6f, -8.5), vec3(4.5, 4.7f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(4.5, 4.7f, -8.5), vec3(5.5, 4.8f, -5.5)));
-    props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(8.5, 4.9f, -5.5)));
-    //plane for the slope
-    props.push_back(new Floor(vec3(-5.6, 3.8f, -8.5), vec3(5.5, 4.92f, -8.5), vec3(5.5, 4.92f, -5.5), vec3(-5.6, 3.8f, -5.5)));
-
-    //Vertical movingBlock
-    MovingBlock* elevator = new MovingBlock(vec3(1, 0.0f, 0), vec3(4, 0.1f, 3));
-    elevator->setVerticalMinMax(0, 4.9);
-    elevator->setVerticalSpeed(0.01f);
-    props.push_back(elevator);
-    //Horizontal moving block
-    MovingBlock* horizontal = new MovingBlock(vec3(5.5, 4.8f, -5.5), vec3(8.5, 4.9f, -2.5));
-    horizontal->setMinMax(vec3(5.5, 4.8f, -5.5), vec3(8.5, 8.9f, 5.5));
-    horizontal->setSpeed(vec3(0,0.005,0.01f));
-    props.push_back(horizontal);
-
-    //Objective
-    props.push_back(new RectangularBlock(vec3(5.5, 4.8f, -8.5), vec3(8.5, 4.9f, -5.5)));
-
-    
-    //
-    //Box
-    props.push_back(new RectangularBlock(vec3(0.0f, 11.0f, 0.0f), vec3(3.0f, 13.0f, 3.0f), true));
-    props.push_back(new RectangularBlock(vec3(1.5f, 11.0f, 1.5f), vec3(3.0f, 13.0f, 3.0f)));
-
+    //Corridor 0 room1 fun
     Portal* p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);
     Portal* p2 = new Portal(vec2(-2.0f,0.0f), vec2(-0.5f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
-    p1->linkPortals(p2);
-    portals.push_back(p1);
-    portals.push_back(p2);
+    corridor0->setupPx(p1, p2);
     p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);
     p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
-    p1->linkPortals(p2);
-    portals.push_back(p1);
-    portals.push_back(p2);
+    corridor0->setupPz(p1, p2);
 
+    //Corridor 1 spawn to room 1
+    p1 = new Portal(vec2(5.0f,11.0f), vec2(6.5f,13.0f), 7.97, Portal::XAXIS, Portal::NEGATIVE);
+    p2 = new Portal(vec2(-9.25f,11.0f), vec2(-7.75f,13.0f), -7.03f, Portal::XAXIS, Portal::NEGATIVE);
+    corridor1->setupPx(p1, p2);
+    p1 = new Portal(vec2(5.0f,11.0f), vec2(6.5f,13.0f), 7.97f, Portal::ZAXIS, Portal::NEGATIVE);
+    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), 9.97f, Portal::ZAXIS, Portal::NEGATIVE);
+    corridor1->setupPz(p1, p2);
+    corridor1->changePortalsState(false);
+
+    //Corridor 2 room 1 to room 2
+    p1 = new Portal(vec2(5.0f,11.0f), vec2(6.5f,13.0f), 2.97, Portal::XAXIS, Portal::NEGATIVE);
+    p2 = new Portal(vec2(-9.25f,11.0f), vec2(-7.75f,13.0f), -7.03f, Portal::XAXIS, Portal::NEGATIVE);
+    corridor1->setupPx(p1, p2);
+    p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 7.97f, Portal::ZAXIS, Portal::NEGATIVE);
+    p2 = new Portal(vec2(-9.25f,11.0f), vec2(-7.75f,13.0f), -7.03f, Portal::XAXIS, Portal::NEGATIVE);
+    corridor1->setupPz(p1, p2);
+    corridor1->changePortalsState(false);
+    
+    Room1 room1(props, corridor1, corridor2);
+    Room2 room2(props, portals, corridor2, corridor3);
+    
 }
 
 void MainWindow::Run()

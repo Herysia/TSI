@@ -5,6 +5,7 @@
 #include "vec3.hpp"
 #include "MovingBlock.hpp"
 #include "Portal.hpp"
+#include "Key.hpp"
 #include <vector>
 #include <cmath>
 
@@ -37,6 +38,10 @@ public:
         skipCollision = false;
     }
     bool noClipMode = false;
+    inline int getScore()
+    {
+        return score;
+    }
 private:
     vec3 viewAngle;
     vec3 camPosition;
@@ -44,6 +49,7 @@ private:
 
     vec3 speed;
     bool isOnGround;
+    int score = 0;
 
     bool applyVerticalCollision(const Plane &other);
     bool applyVerticalCollision(const AABB &other);

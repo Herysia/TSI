@@ -10,8 +10,8 @@ public:
     RectangularBlock(vec3 min, vec3 max, bool shouldBeInside = false);
     virtual void Draw(const vec3 &camPosition) override
     {
-        // if(aabb.shouldBeInside)
-        //     return;
+        if(isInvisible)
+            return;
         glUseProgram(shaderProgramId);
         //envoie des parametres uniformes
         {
@@ -39,7 +39,7 @@ public:
         glDrawElements(GL_TRIANGLES, 3 * nbTriangles, GL_UNSIGNED_INT, 0);
         PRINT_OPENGL_ERROR();
     }
-    
+    bool isInvisible = false;
 private:
 protected:
     vec3 min, max;

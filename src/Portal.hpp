@@ -28,9 +28,9 @@ public:
     vec3 pos;
     bool axis = XAXIS;
     bool dir = POSITIVE;
+    bool state = false;
 private:
 protected:
-
 };
 
 #endif //PORTAL_H
