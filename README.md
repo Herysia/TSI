@@ -30,7 +30,7 @@ executable
 
 - You can have noclip by have capslock on
 	
-# Test video (/!\ SPOILER /!\)
+# Test video (/!\ SPOILER /!\\)
 https://youtu.be/bqJpsY30ndA
 
 # Contributors
