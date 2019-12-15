@@ -8,7 +8,7 @@ class RectangularBlock : public Entity
 {
 public:
     RectangularBlock(vec3 min, vec3 max, bool shouldBeInside = false);
-    virtual void Draw(const vec3 &camPosition) override
+    virtual void Draw(const vec3 &camPosition, bool wireframe = false) override
     {
         if(isInvisible)
             return;
@@ -35,8 +35,10 @@ public:
         PRINT_OPENGL_ERROR();
         PRINT_OPENGL_ERROR();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi);
-
-        glDrawElements(GL_TRIANGLES, 3 * nbTriangles, GL_UNSIGNED_INT, 0);
+        if(wireframe)
+            glDrawElements(GL_LINE_LOOP, 3 * nbTriangles, GL_UNSIGNED_INT, 0);
+        else
+            glDrawElements(GL_TRIANGLES, 3 * nbTriangles, GL_UNSIGNED_INT, 0);
         PRINT_OPENGL_ERROR();
     }
     bool isInvisible = false;

@@ -1,9 +1,11 @@
 #include "Key.hpp"
 
-Key::Key(vec3 min, vec3 max) : RectangularBlock(min, max, false)
+Key::Key(vec3 min, vec3 max, Corridor* cIn, Corridor* cOut) : RectangularBlock(min, max, false)
 {
     color = vec3(1.0f, 0.0f, 0.0f);
     Key::maxScore++;
+    this->cIn = cIn;
+    this->cOut = cOut;
 }
 
 bool Key::checkCollision(Player* player)
@@ -16,10 +18,15 @@ bool Key::checkCollision(Player* player)
     && (aabb.min.z <= max.z && aabb.max.z >= min.z))
     {
         hasBeenTaken = true;
+        //Do script
+        if(cIn)
+            cIn->changePortalsState(false);
+        if(cOut)
+            cOut->changePortalsState(true);
     }
     return hasBeenTaken;
 }
-void Key::Draw(const vec3 &camPosition)
+void Key::Draw(const vec3 &camPosition, bool)
 {
     if(hasBeenTaken)
         return;

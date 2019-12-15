@@ -6,7 +6,7 @@ class Floor : public Entity
 {
 public:
     Floor(vec3 p0, vec3 p1, vec3 p2, vec3 p4, bool isVisible = false, vec3 color = vec3());
-    virtual void Draw(const vec3 &camPosition) override
+    virtual void Draw(const vec3 &camPosition, bool) override
     {
         if(!isVisible)
             return;

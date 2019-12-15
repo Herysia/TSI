@@ -63,7 +63,7 @@ Portal::Portal(vec2 min, vec2 max, float depth,  bool axis, bool dir)
     PRINT_OPENGL_ERROR();
 }
 
-void Portal::Draw(const vec3 &camPosition)
+void Portal::Draw(const vec3 &camPosition, bool)
 {
     glUseProgram(shaderProgramId);
     //envoie des parametres uniformes

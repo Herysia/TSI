@@ -6,7 +6,7 @@ Entity::Entity()
     shaderProgramId = shaderProgramIdTextured;
 }
 
-void Entity::Draw(const vec3 &camPosition)
+void Entity::Draw(const vec3 &camPosition, bool wireframe)
 {
     glUseProgram(shaderProgramId);
     //envoie des parametres uniformes

@@ -19,7 +19,7 @@ public:
         POSITIVE = false,
         NEGATIVE = true
     };
-    virtual void Draw(const vec3 &camPosition) override;
+    virtual void Draw(const vec3 &camPosition, bool = false) override;
     void linkPortals(Portal* other);
     float getViewDelta() const;
     vec3 getPosDelta(const vec3 &currPos, float deltaY) const;
@@ -29,6 +29,7 @@ public:
     bool axis = XAXIS;
     bool dir = POSITIVE;
     bool state = false;
+    bool wireframe = false;
 private:
 protected:
 };

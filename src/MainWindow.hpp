@@ -26,6 +26,7 @@
 #include "levelDesign/Room1.hpp"
 #include "levelDesign/Room2.hpp"
 #include "levelDesign/Room3.hpp"
+#include "levelDesign/Room4.hpp"
 #include "levelDesign/Spawn.hpp"
 #include "levelDesign/Corridor.hpp"
 
@@ -89,7 +90,10 @@ private:
 
     //GUI
     bool shouldDrawRules = true;
+    bool tempoScore1 = true;
+    bool tempoScore2 = true;
 
+    //LevelDesign
     Corridor* corridor0;
     Corridor* corridor1;
     Corridor* corridor2;

@@ -1,12 +1,5 @@
 #ifndef ROOM1_H
 #define ROOM1_H
-#include "../RectangularBlock.hpp"
-#include "../Floor.hpp"
-#include "../Key.hpp"
-#include "../MovingBlock.hpp"
-#include "Corridor.hpp"
-
-#include "../Entity.hpp"
 
 class Room1
 {
@@ -64,12 +57,8 @@ public:
         props.push_back(horizontal);
 
         //Objective
-        props.push_back(new Key(vec3(6.5, 8.9f, 3.5), vec3(7.5, 9.9f, 4.5)));
-        in = cIn;
-        out = cOut;
+        props.push_back(new Key(vec3(6.5, 8.9f, 3.5), vec3(7.5, 9.9f, 4.5), cIn, cOut));
     }
-    Corridor* in;
-    Corridor* out;
 };
 
 #endif //ROOM1_H

@@ -125,6 +125,34 @@ void MainWindow::DrawHUD()
             swap = true;
         }
     }
+    if(currentWindow->localPlayer->getScore()==1)
+    {
+        if(tempoScore1)
+        {
+            drawString(-0.25f, 0.0f, "Ne soyez pas si sur de vos souvenirs");
+            //once
+            static bool swap = true;
+            if(swap)
+            {
+                glutTimerFunc(5000, [](int){currentWindow->tempoScore1=false;}, 0);
+                swap = true;
+            }
+        }
+    }
+    if(currentWindow->localPlayer->getScore()==2)
+    {
+        if(tempoScore2)
+        {
+            drawString(-0.19f, 0.0f, "Ne perdez jamais espoir");
+            //once
+            static bool swap = true;
+            if(swap)
+            {
+                glutTimerFunc(5000, [](int){currentWindow->tempoScore2=false;}, 0);
+                swap = true;
+            }
+        }
+    }
     //Drawing score
     std::ostringstream oss;
     oss << currentWindow->localPlayer->getScore() << " / " << Key::maxScore;
@@ -182,7 +210,7 @@ void MainWindow::DrawScene()
 
         for(auto &prop : currentWindow->props)
         {
-            prop->Draw(currentWindow->localPlayer->getCamPosition()+detlaPos);
+            prop->Draw(currentWindow->localPlayer->getCamPosition()+detlaPos, portal->wireframe);
         }
 
         //Disable Clipping & correct angle
@@ -393,39 +421,53 @@ void MainWindow::loadData()
 
     //Main room corridors
     corridor0 = new Corridor(props, portals);
-    corridor1 = new Corridor(props, portals, vec3(5.0f,0.0f,5.0f));
-    corridor2 = new Corridor(props, portals, vec3(5.0f,0.0f,0.0f));
-    corridor3 = new Corridor(props, portals, vec3(0.0f,0.0f,5.0f));
+    corridor1 = new Corridor(props, portals, vec3(0.0f, 3.0f, 0.0f));
+    corridor2 = new Corridor(props, portals, vec3(0.0f, 6.0f, 0.0f));
+    corridor3 = new Corridor(props, portals, vec3(0.0f, 9.0f, 0.0f));
     
     //Corridor 0 room1 fun
-    Portal* p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);
-    Portal* p2 = new Portal(vec2(-2.0f,0.0f), vec2(-0.5f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
+    Portal* p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//corridor
+    Portal* p2 = new Portal(vec2(-2.0f,0.0f), vec2(-0.5f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);//room
     corridor0->setupPx(p1, p2);
-    p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);
-    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);
+    p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//corridor
+    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), -9.97f, Portal::ZAXIS, Portal::POSITIVE);//room
     corridor0->setupPz(p1, p2);
+    corridor0->changePortalsState(true);
 
     //Corridor 1 spawn to room 1
-    p1 = new Portal(vec2(5.0f,11.0f), vec2(6.5f,13.0f), 7.97, Portal::XAXIS, Portal::NEGATIVE);
-    p2 = new Portal(vec2(-9.25f,11.0f), vec2(-7.75f,13.0f), -7.03f, Portal::XAXIS, Portal::NEGATIVE);
+    p1 = new Portal(vec2(0.0f,11.0f + 3.0f), vec2(1.5f,13.0f + 3.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//corridor
+    p2 = new Portal(vec2(-9.25f,11.0f), vec2(-7.75f,13.0f), -7.03f, Portal::XAXIS, Portal::NEGATIVE);//spawn
     corridor1->setupPx(p1, p2);
-    p1 = new Portal(vec2(5.0f,11.0f), vec2(6.5f,13.0f), 7.97f, Portal::ZAXIS, Portal::NEGATIVE);
-    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), 9.97f, Portal::ZAXIS, Portal::NEGATIVE);
+    p1 = new Portal(vec2(0.0f,11.0f + 3.0f), vec2(1.5f,13.0f + 3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//corridor
+    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), 9.97f, Portal::ZAXIS, Portal::NEGATIVE);//room
     corridor1->setupPz(p1, p2);
     corridor1->changePortalsState(false);
 
     //Corridor 2 room 1 to room 2
-    p1 = new Portal(vec2(5.0f,11.0f), vec2(6.5f,13.0f), 2.97, Portal::XAXIS, Portal::NEGATIVE);
-    p2 = new Portal(vec2(-9.25f,11.0f), vec2(-7.75f,13.0f), -7.03f, Portal::XAXIS, Portal::NEGATIVE);
-    corridor1->setupPx(p1, p2);
-    p1 = new Portal(vec2(0.0f,11.0f), vec2(1.5f,13.0f), 7.97f, Portal::ZAXIS, Portal::NEGATIVE);
-    p2 = new Portal(vec2(-9.25f,11.0f), vec2(-7.75f,13.0f), -7.03f, Portal::XAXIS, Portal::NEGATIVE);
-    corridor1->setupPz(p1, p2);
-    corridor1->changePortalsState(false);
-    
+    p1 = new Portal(vec2(0.0f,11.0f + 6.0f), vec2(1.5f,13.0f + 6.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//corridor
+    p2 = new Portal(vec2(0.5f,0.0f), vec2(2.0f,2.0f), 9.97f, Portal::ZAXIS, Portal::NEGATIVE);//room1
+    corridor2->setupPx(p1, p2);
+    p1 = new Portal(vec2(0.0f,11.0f + 6.0f), vec2(1.5f,13.0f + 6.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//corridor
+    p2 = new Portal(vec2(-4.0f,11.0f), vec2(-2.5f,13.0f), -9.97f, Portal::XAXIS, Portal::POSITIVE);//room2
+    corridor2->setupPz(p1, p2);
+    corridor2->changePortalsState(false);
+
+    //Corridor 3 room 2 to room3
+    p1 = new Portal(vec2(0.0f,11.0f + 9.0f), vec2(1.5f,13.0f + 9.0f), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//corridor
+    p2 = new Portal(vec2(0.0f,11.0f + 12.0f), vec2(1.5f,13.0f + 12.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 1
+    corridor3->setupPx(p1, p2);
+    p1 = new Portal(vec2(0.0f,11.0f + 9.0f), vec2(1.5f,13.0f + 9.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//corridor
+    p2 = new Portal(vec2(-4.0f,15.5f), vec2(-2.5f,17.5f), -9.97f, Portal::XAXIS, Portal::POSITIVE);//room2
+    corridor3->setupPz(p1, p2);
+    corridor3->changePortalsState(false);
+
     Room1 room1(props, corridor1, corridor2);
     Room2 room2(props, portals, corridor2, corridor3);
+    Room3 room3(props, portals);
+    Room4 room4(props, portals);
     
+
+
 }
 
 void MainWindow::Run()

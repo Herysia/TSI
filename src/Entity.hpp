@@ -22,7 +22,7 @@ public:
     vec3 rotationCenter;
     vec3 translation;
 
-    virtual void Draw(const vec3 &camPosition);
+    virtual void Draw(const vec3 &camPosition, bool wireframe = false);
     GLuint textureId;
     vec3 color;
 

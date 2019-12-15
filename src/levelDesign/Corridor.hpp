@@ -1,17 +1,17 @@
 #ifndef CORRIDOR_H
 #define CORRIDOR_H
 
-#include "../RectangularBlock.hpp"
-#include "../Portal.hpp"
-
-#include "../Entity.hpp"
 class Corridor
 {
 public:
-    Corridor(std::vector<Entity*> &props, std::vector<Portal*> &portals, const vec3 &offset=vec3())
+    Corridor(std::vector<Entity*> &props, std::vector<Portal*> &portals, const vec3 &offset=vec3(), const vec3 &color = vec3(1.0f, 1.0f, 1.0f))
     {
-        props.push_back(new RectangularBlock(vec3(0.0f, 11.0f, 0.0f)+offset, vec3(3.0f, 13.0f, 3.0f)+offset, true));
-        props.push_back(new RectangularBlock(vec3(1.5f, 11.0f, 1.5f)+offset, vec3(3.0f, 13.0f, 3.0f)+offset));
+        RectangularBlock* rect = new RectangularBlock(vec3(0.0f, 11.0f, 0.0f)+offset, vec3(3.0f, 13.0f, 3.0f)+offset, true);
+        rect->color = color;
+        props.push_back(rect);
+        rect = new RectangularBlock(vec3(1.5f, 11.0f, 1.5f)+offset, vec3(3.0f, 13.0f, 3.0f)+offset);
+        rect->color = color;
+        props.push_back(rect);
         this->portals = &portals;
     }
     void setupPx(Portal* px, Portal* pxDest)
@@ -34,6 +34,16 @@ public:
     {
         px->state = state;
         pxDest->state = state;
+        pz->state = state;
+        pzDest->state = state;
+    }
+    void changeXState(bool state)
+    {
+        px->state = state;
+        pxDest->state = state;
+    }
+    void changeZState(bool state)
+    {
         pz->state = state;
         pzDest->state = state;
     }
