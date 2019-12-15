@@ -30,6 +30,9 @@ executable
 
 - You can have noclip by have capslock on
 	
+# Test video (/!\ SPOILER /!\)
+https://youtu.be/bqJpsY30ndA
+
 # Contributors
 - GIRERD Thomas
 - PHAM Duy Anh Philippe
