@@ -1,7 +1,7 @@
 #ifndef KEY_H
 #define KEY_H
 
-#include "rectangularBlock.hpp"
+#include "RectangularBlock.hpp"
 #include "Player.hpp"
 #include "levelDesign/Corridor.hpp"
 class Player;
