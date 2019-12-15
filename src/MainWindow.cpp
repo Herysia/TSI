@@ -169,10 +169,25 @@ void MainWindow::DrawHUD()
 //Code adapted from https://github.com/ThomasRinsma/opengl-game-test/blob/86d4dcfccdfe067d6154ff94992e347856578632/src/scene.cc
 void MainWindow::DrawScene()
 {
+    float posY = currentWindow->localPlayer->getCamPosition().y;
     for(auto portal : currentWindow->portals)
     {
         if(!portal->state)
             continue;
+        //Performance hotfix for corridors
+        if(posY > 10.0f)
+        {
+            float delta = posY-portal->pos.y;
+            if(Abs(delta) > 5)
+                continue;
+        }
+        else
+        {
+            if(portal->pos.y >= 10.0f)
+                continue;
+        }
+        
+
         //Draw portal on stencil buffer
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glDepthMask(GL_FALSE);

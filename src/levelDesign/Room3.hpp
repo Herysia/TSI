@@ -11,7 +11,7 @@ public:
         Portal* p1 = new Portal(vec2(0.0f,11.0f + offset), vec2(1.5f,13.0f + offset), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//room3 - 1
         Portal* p2 = new Portal(vec2(0.0f,11.0f + offset + 3.0f), vec2(1.5f,13.0f + offset +3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 2
         corr->setupPz(p1, p2);
-        corr->changeZState(false);
+        corr->changeZState(true);
 
         offset+=3.0f;
 
@@ -19,7 +19,7 @@ public:
         p1 = new Portal(vec2(0.0f,11.0f + offset), vec2(1.5f,13.0f + offset), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//room3 - 2
         p2 = new Portal(vec2(0.0f,11.0f + offset+3.0f), vec2(1.5f,13.0f + offset +3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 3
         corr->setupPz(p1, p2);
-        corr->changeZState(false);
+        corr->changeZState(true);
         
         offset+=3.0f;
 
@@ -27,7 +27,7 @@ public:
         p1 = new Portal(vec2(0.0f,11.0f + offset), vec2(1.5f,13.0f + offset), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//room3 - 3
         p2 = new Portal(vec2(0.0f,11.0f + offset+3.0f), vec2(1.5f,13.0f + offset +3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 4
         corr->setupPz(p1, p2);
-        corr->changeZState(false);
+        corr->changeZState(true);
         
         offset+=3.0f;
 
@@ -35,7 +35,7 @@ public:
         p1 = new Portal(vec2(0.0f,11.0f + offset), vec2(1.5f,13.0f + offset), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//room3 - 4
         p2 = new Portal(vec2(0.0f,11.0f + offset+3.0f), vec2(1.5f,13.0f + offset +3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 5
         corr->setupPz(p1, p2);
-        corr->changeZState(false);
+        corr->changeZState(true);
         
         offset+=3.0f;
 
@@ -43,7 +43,7 @@ public:
         p1 = new Portal(vec2(0.0f,11.0f + offset), vec2(1.5f,13.0f + offset), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//room3 - 5
         p2 = new Portal(vec2(0.0f,11.0f + offset+3.0f), vec2(1.5f,13.0f + offset +3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 6
         corr->setupPz(p1, p2);
-        corr->changeZState(false);
+        corr->changeZState(true);
         
         offset+=3.0f;
 
@@ -51,7 +51,7 @@ public:
         p1 = new Portal(vec2(0.0f,11.0f + offset), vec2(1.5f,13.0f + offset), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//room3 - 6
         p2 = new Portal(vec2(0.0f,11.0f + offset+3.0f), vec2(1.5f,13.0f + offset +3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 7
         corr->setupPz(p1, p2);
-        corr->changeZState(false);
+        corr->changeZState(true);
         
         offset+=3.0f;
 
@@ -59,7 +59,7 @@ public:
         p1 = new Portal(vec2(0.0f,11.0f + offset), vec2(1.5f,13.0f + offset), 2.97f, Portal::XAXIS, Portal::NEGATIVE);//room3 - 7
         p2 = new Portal(vec2(0.0f,11.0f + offset+3.0f), vec2(1.5f,13.0f + offset +3.0f), 2.97f, Portal::ZAXIS, Portal::NEGATIVE);//room3 - 8
         corr->setupPz(p1, p2);
-        corr->changeZState(false);
+        corr->changeZState(true);
         
         offset+=3.0f;
 
