@@ -1,6 +1,6 @@
 # TSI
 
-Minimalist non euclidean game (OpenGL)
+Minimalist non euclidean game (OpenGL) made in ~2 weeks
 
 # Requirements & Install
 You need to install:
