@@ -27,7 +27,7 @@ public:
     {
         return speed.y;
     }
-    inline vec3 setSpeed(vec3 speed)
+    inline void setSpeed(vec3 speed)
     {
         this->speed = speed;
     }

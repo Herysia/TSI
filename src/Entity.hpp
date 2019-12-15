@@ -53,10 +53,6 @@ private:
     {
         return shaderProgramId == shaderProgramIdColored;
     }
-    inline bool isTextured()
-    {
-        return shaderProgramId == shaderProgramIdTextured;
-    }
 
 
 protected:
@@ -70,7 +66,7 @@ protected:
     AABB aabb;
     CollisionMode mode;
     GLuint shaderProgramId;  
-    virtual void moveEntity(vec3 dist)
+    virtual void moveEntity(vec3)
     {
         ;
     }

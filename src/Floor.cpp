@@ -66,5 +66,4 @@ Floor::Floor(vec3 p0, vec3 p1, vec3 p2, vec3 p3, bool isVisible, vec3 color)
     PRINT_OPENGL_ERROR();
 
     // Chargement de la texture
-    loadTexture("../data/grass.tga", &textureId);
 }

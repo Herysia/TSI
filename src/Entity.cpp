@@ -3,10 +3,10 @@
 Entity::Entity()
 {
     mode = MODE_AABB;
-    shaderProgramId = shaderProgramIdTextured;
+    shaderProgramId = shaderProgramIdColored;
 }
 
-void Entity::Draw(const vec3 &camPosition, bool wireframe)
+void Entity::Draw(const vec3 &camPosition, bool)
 {
     glUseProgram(shaderProgramId);
     //envoie des parametres uniformes
@@ -34,36 +34,17 @@ void Entity::Draw(const vec3 &camPosition, bool wireframe)
         PRINT_OPENGL_ERROR();
         glVertexPointer(3, GL_FLOAT, sizeof(vertex_opengl), 0);
         PRINT_OPENGL_ERROR();
-        if (isTextured())
-        {
-            glEnableClientState(GL_NORMAL_ARRAY);
-            PRINT_OPENGL_ERROR();
-            PRINT_OPENGL_ERROR();
-            glNormalPointer(GL_FLOAT, sizeof(vertex_opengl), buffer_offset(sizeof(vec3)));
-            PRINT_OPENGL_ERROR();
-        }
-
         glEnableClientState(GL_COLOR_ARRAY);
         PRINT_OPENGL_ERROR();
         PRINT_OPENGL_ERROR();
         glColorPointer(3, GL_FLOAT, sizeof(vertex_opengl), buffer_offset(2 * sizeof(vec3)));
         PRINT_OPENGL_ERROR();
-        if (isTextured())
-        {
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            PRINT_OPENGL_ERROR();
-            PRINT_OPENGL_ERROR();
-            glTexCoordPointer(2, GL_FLOAT, sizeof(vertex_opengl), buffer_offset(3 * sizeof(vec3)));
-            PRINT_OPENGL_ERROR();
-        }
     }
 
     //affichage
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboi);
         PRINT_OPENGL_ERROR();
-        if (isTextured())
-            glBindTexture(GL_TEXTURE_2D, textureId);
         PRINT_OPENGL_ERROR();
 
         //glDrawElements(GL_LINE_LOOP, 3*nbTriangles, GL_UNSIGNED_INT, 0);     PRINT_OPENGL_ERROR();

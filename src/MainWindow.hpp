@@ -15,7 +15,6 @@
 #include "glutils.hpp"
 #include "mat4.hpp"
 #include "Entity.hpp"
-#include "Table.hpp"
 #include "Floor.hpp"
 #include "Player.hpp"
 #include "RectangularBlock.hpp"
@@ -56,7 +55,7 @@ private:
     void DrawHUD();
     void DrawScene();
 
-    inline static void resizeHandler(int width, int height) {
+    inline static void resizeHandler(int, int) {
         //prevent resize for now
         //TODO: handle resize
         glutReshapeWindow(1366, 768);

@@ -10,7 +10,6 @@
 #include "global.hpp"
 
 GLuint shaderProgramIdColored;
-GLuint shaderProgramIdTextured;
 int main(int argc, char **argv)
 {
     MainWindow main = MainWindow();

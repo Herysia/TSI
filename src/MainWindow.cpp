@@ -79,24 +79,6 @@ void MainWindow::displayCallback()
         glUniform4f(get_uni_loc(shaderProgramIdColored, "translation_view"), tv.x, tv.y, tv.z, 0.0f);
         PRINT_OPENGL_ERROR();
     }
-    // Affecte les parametres uniformes de la vue (identique pour tous les modeles de la scene)
-    glUseProgram(shaderProgramIdTextured);
-    {
-        //envoie de la rotation
-        glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "rotation_view"), 1, false, currentWindow->localPlayer->rotation.pointeur());
-        PRINT_OPENGL_ERROR();
-
-        //envoie du centre de rotation
-        vec3 cv = currentWindow->localPlayer->rotationCenter;
-        glUniform4f(get_uni_loc(shaderProgramIdTextured, "rotation_center_view"), cv.x, cv.y, cv.z, 0.0f);
-        PRINT_OPENGL_ERROR();
-
-        //envoie de la translation
-        vec3 tv = currentWindow->localPlayer->translation;
-        glUniform4f(get_uni_loc(shaderProgramIdTextured, "translation_view"), tv.x, tv.y, tv.z, 0.0f);
-        PRINT_OPENGL_ERROR();
-    }
-
     currentWindow->DrawScene();
     currentWindow->DrawHUD();
     //Changement de buffer d'affichage pour eviter un effet de scintillement
@@ -320,7 +302,6 @@ void MainWindow::keyboardCallback(unsigned char key, int, int, bool down)
 
 void MainWindow::specialCallback(int key, int, int, bool down)
 {
-    float dL = 0.03f;
     switch (key)
     {
     case GLUT_KEY_UP:
@@ -406,7 +387,6 @@ void MainWindow::loadData()
     // Chargement du shader
     //TODO: shader for planes // color rendering for floor
     shaderProgramIdColored = read_shader("data/color.vert", "data/color.frag");
-    shaderProgramIdTextured = read_shader("data/shader.vert", "data/shader.frag");
     projection = mat4::matrice_projection(80.0f * M_PI / 180.0f, 16.0f / 9.0f, 0.01f, 100.0f);
 
     glUseProgram(shaderProgramIdColored);
@@ -420,19 +400,11 @@ void MainWindow::loadData()
     glEnable(GL_CLIP_DISTANCE0);
     PRINT_OPENGL_ERROR();
 
-    glUseProgram(shaderProgramIdTextured);
-    glUniformMatrix4fv(get_uni_loc(shaderProgramIdTextured, "projection"), 1, false, projection.pointeur());
-    PRINT_OPENGL_ERROR();
-
-    //activation de la gestion de la profondeur
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CLIP_DISTANCE0);
-    PRINT_OPENGL_ERROR();
 
     localPlayer = new Player();
     //Initialising number of keys to 0
     Key::maxScore = 0;
-    Spawn spawn(props, portals);
+    Spawn spawn(props);
 
     //Main room corridors
     corridor0 = new Corridor(props, portals);

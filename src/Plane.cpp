@@ -28,9 +28,6 @@ Plane::Plane(vec3 p1, vec3 p2, vec3 p3, vec3 p4, bool vert)
     collideVertically = vert;
 }
 
-bool Plane::isColliding(const Plane &other) const
-{
-}
 bool Plane::check2Dcoord(const AABB &other) const
 {
     if (isInfinite)
@@ -46,10 +43,10 @@ bool Plane::check2Dcoord(const AABB &other) const
 
     //if the point is neither between or outside both lines (opposite lines from the plane)
     //  /!\ The plane shape must be convex
-    if (!((center2D - p1.get2D()).cross((p2 - p1).get2D()) > 0.0f ^ (center2D - p4.get2D()).cross((p3 - p4).get2D()) > 0.0f))
+    if (!((((center2D - p1.get2D()).cross((p2 - p1).get2D())) > 0.0f) ^ ((center2D - p4.get2D()).cross((p3 - p4).get2D()) > 0.0f)))
         return false;
     //outside axis2
-    if (!((center2D - p1.get2D()).cross((p4 - p1).get2D()) > 0.0f ^ (center2D - p2.get2D()).cross((p3 - p2).get2D()) > 0.0f))
+    if (!(((center2D - p1.get2D()).cross((p4 - p1).get2D()) > 0.0f) ^ ((center2D - p2.get2D()).cross((p3 - p2).get2D()) > 0.0f)))
         return false;
     return true;
 }

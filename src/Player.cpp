@@ -150,8 +150,8 @@ bool Player::applyHorizontalCollision(const AABB &other)
          && (aabb.min.y+0.003f <= other.max.y && aabb.max.y >= other.min.y)                //overlapping on y axis; +0.003f: hotfix for overlapped objects
          && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))                      //overlapping on z axis;
         || (other.shouldBeInside 
-        && (((aabb.max.x >= other.max.x && aabb.min.x <= other.max.x) || (aabb.min.x <= other.min.x && aabb.max.x >= other.min.x)) && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z)
-        || ((aabb.max.z >= other.max.z && aabb.min.z <= other.max.z) || (aabb.min.z <= other.min.z && aabb.max.z >= other.min.z)) && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x))
+        && ((((aabb.max.x >= other.max.x && aabb.min.x <= other.max.x) || (aabb.min.x <= other.min.x && aabb.max.x >= other.min.x)) && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))
+        || (((aabb.max.z >= other.max.z && aabb.min.z <= other.max.z) || (aabb.min.z <= other.min.z && aabb.max.z >= other.min.z)) && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x)))
         && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y)))
     {
         vec2 coord2D = aabb.getCenter2D();
@@ -219,14 +219,14 @@ void Player::correctPosition(const Entity &other)
 bool Player::checkPortalCollision(const Portal &portal)
 {
     AABB other = portal.getAABB();
-    if((portal.axis == Portal::XAXIS && (aabb.max.x <= other.max.x && aabb.min.x >= other.min.x) || portal.axis == Portal::ZAXIS && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x))
-    && (portal.axis == Portal::ZAXIS && (aabb.max.z <= other.max.z && aabb.min.z >= other.min.z) || portal.axis == Portal::XAXIS && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z))
+    if(((portal.axis == Portal::XAXIS && (aabb.max.x <= other.max.x && aabb.min.x >= other.min.x)) || (portal.axis == Portal::ZAXIS && (aabb.min.x <= other.max.x && aabb.max.x >= other.min.x)))
+    && ((portal.axis == Portal::ZAXIS && (aabb.max.z <= other.max.z && aabb.min.z >= other.min.z)) || (portal.axis == Portal::XAXIS && (aabb.min.z <= other.max.z && aabb.max.z >= other.min.z)))
     && (aabb.min.y <= other.max.y && aabb.max.y >= other.min.y))
     {
         skipCollision = true;
         if(portal.axis == Portal::ZAXIS)
         {
-            if(camPosition.x - portal.pos.x > 0  ^ camPosition.x-speed.x - portal.pos.x > 0)
+            if((camPosition.x - portal.pos.x > 0)  ^ (camPosition.x-speed.x - portal.pos.x > 0))
             {
                 float angleY = portal.getViewDelta();
                 move(portal.getPosDelta(camPosition, angleY));
@@ -236,7 +236,7 @@ bool Player::checkPortalCollision(const Portal &portal)
         }
         else
         {
-            if(camPosition.z - portal.pos.z > 0  ^ camPosition.z-speed.z - portal.pos.z > 0)
+            if((camPosition.z - portal.pos.z > 0)  ^ (camPosition.z-speed.z - portal.pos.z > 0))
             {
                 float angleY = portal.getViewDelta();
                 move(portal.getPosDelta(camPosition, angleY));

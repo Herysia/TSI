@@ -6,9 +6,6 @@ AABB::AABB(vec3 min, vec3 max)
     this->max = max;
 }
 
-bool AABB::isColliding(AABB other)
-{
-}
 
 vec2 AABB::getCenter2D() const
 {
