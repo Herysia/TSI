@@ -28,7 +28,7 @@ executable
  
 - Move camera with arrow keys or mouse
 
-- You can have noclip by have capslock on
+- You can have noclip by having capslock on
 	
 # Test video (/!\ SPOILER /!\\)
 https://youtu.be/bqJpsY30ndA
